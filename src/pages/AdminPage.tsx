@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Box, Check, ChevronRight, FileText, Home, LogOut, Mail, Plus, Save, Settings, ShieldCheck, Tags, Users, X } from 'lucide-react';
 import { cmsSupabase } from '@/lib/cmsSupabase';
 
-type Tab = 'overview' | 'stories' | 'submissions' | 'products' | 'categories' | 'authors' | 'homepage' | 'newsletter';
+type Tab = 'overview' | 'stories' | 'submissions' | 'products' | 'categories' | 'authors' | 'homepage' | 'newsletter' | 'orders';
 type Row = Record<string, any>;
 const NAV: { id: Tab; label: string; icon: typeof Home }[] = [
   { id: 'overview', label: 'Overview', icon: Home },
   { id: 'stories', label: 'Stories', icon: BookOpen },
   { id: 'submissions', label: 'Submissions', icon: FileText },
   { id: 'products', label: 'Products', icon: Box },
+  { id: 'orders', label: 'Orders', icon: Box },
   { id: 'categories', label: 'Categories', icon: Tags },
   { id: 'authors', label: 'Authors', icon: Users },
   { id: 'homepage', label: 'Homepage', icon: Settings },
@@ -35,7 +36,7 @@ export function AdminPage() {
   const [resetNotice, setResetNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>('overview');
-  const [data, setData] = useState<Record<string, Row[]>>({ articles: [], contributions: [], products: [], categories: [], authors: [], newsletter_subscribers: [] });
+  const [data, setData] = useState<Record<string, Row[]>>({ articles: [], contributions: [], products: [], categories: [], authors: [], newsletter_subscribers: [], store_orders: [] });
   const [settings, setSettings] = useState<Row>({});
   const [editor, setEditor] = useState<{ kind: 'article' | 'product' | 'category' | 'author'; row: Row } | null>(null);
   const [notice, setNotice] = useState('');
@@ -49,7 +50,7 @@ export function AdminPage() {
   const load = async () => {
     const client = cmsSupabase;
     if (!client) return;
-    const tables = ['articles', 'contributions', 'products', 'categories', 'authors', 'newsletter_subscribers'];
+    const tables = ['articles', 'contributions', 'products', 'categories', 'authors', 'newsletter_subscribers', 'store_orders'];
     const results = await Promise.all(tables.map(name => client.from(name).select('*').order('created_at', { ascending: false }).limit(200)));
     const next: Record<string, Row[]> = {};
     results.forEach((result, i) => { next[tables[i]] = result.error ? [] : (result.data ?? []); });
@@ -179,6 +180,13 @@ export function AdminPage() {
     if (result.error) { setNotice(result.error.message); return; }
     setNotice('Saved successfully.');
     setEditor(null); await load();
+  };
+
+  const updateOrder = async (row: Row, patch: Row) => {
+    if (!cmsSupabase) return;
+    const { error } = await cmsSupabase.from('store_orders').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', row.id);
+    setNotice(error ? error.message : 'Order updated.');
+    await load();
   };
 
   const updateSubmission = async (row: Row, patch: Row) => {
@@ -376,6 +384,23 @@ export function AdminPage() {
             </section>
             <div className="mt-6 grid gap-4 lg:grid-cols-2">{data.products.map(row=><div key={row.id} className="flex gap-4 border border-white/10 bg-[#151515] p-4"><div className="h-28 w-24 shrink-0 bg-black">{row.image_url&&<img src={row.image_url} alt="" className="h-full w-full object-cover"/>}</div><div className="min-w-0 flex-1"><p className="font-semibold">{row.name}</p><p className="mt-1 text-sm text-white/50">₹{row.price??'—'} · {row.status}</p><p className="mt-1 text-xs text-white/35">{row.category||row.product_type}</p><div className="mt-4 flex gap-2"><button onClick={()=>openEditor('product',row)} className="border border-white/20 px-3 py-2 text-xs">Edit</button><button onClick={()=>void removeRow('product',row)} className="border border-red-400/30 px-3 py-2 text-xs text-red-300">Delete</button></div></div></div>)}{!data.products.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No products yet.</p>}</div>
           </>}
+          {tab==='orders'&&<div className="mt-8 space-y-4">
+            {data.store_orders.map(row=><article key={row.id} className="border border-white/10 bg-[#151515] p-5">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div><p className="font-semibold">{row.order_number||'Order'} · {row.product_name}</p><p className="mt-1 text-xs text-white/45">{row.customer_name} · {row.customer_email} · Qty {row.quantity} · ₹{row.amount}</p><p className="mt-1 text-xs text-white/35">{prettyDate(row.created_at)} · {row.payment_method}</p></div>
+                <span className="text-xs uppercase tracking-wider text-[#f2a17f]">{row.payment_status} / {row.fulfilment_status}</span>
+              </div>
+              {row.shipping_address&&<p className="mt-3 text-xs text-white/50">{[row.shipping_address.address1,row.shipping_address.address2,row.shipping_address.city,row.shipping_address.region,row.shipping_address.zip,row.shipping_address.country].filter(Boolean).join(', ')}</p>}
+              {row.payment_reference&&<p className="mt-2 text-xs text-white/50">Payment reference: {row.payment_reference}</p>}
+              {row.tracking_url&&<a className="mt-2 inline-block text-xs text-[#f18b63] underline" href={row.tracking_url} target="_blank" rel="noreferrer">Tracking link</a>}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button onClick={()=>void updateOrder(row,{payment_status:'verified',fulfilment_status:'ready_to_deliver'})} className="border border-white/20 px-3 py-2 text-xs">Mark paid</button>
+                <button onClick={()=>void updateOrder(row,{payment_status:'rejected',fulfilment_status:'cancelled'})} className="border border-red-400/30 px-3 py-2 text-xs text-red-300">Reject / cancel</button>
+                <button onClick={()=>void updateOrder(row,{fulfilment_status:'delivered'})} className="border border-white/20 px-3 py-2 text-xs">Mark delivered</button>
+              </div>
+            </article>)}
+            {!data.store_orders.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No customer orders yet. New website orders will appear here.</p>}
+          </div>}
           {tab==='categories'&&<div className="mt-8 space-y-3">{data.categories.map(row=><div key={row.id} className="flex items-center justify-between border border-white/10 bg-[#151515] p-4"><div><p className="font-semibold">{row.name}</p><p className="text-xs text-white/40">{row.slug} · {row.is_active?'Active':'Inactive'}</p></div><div className="flex gap-2"><button onClick={()=>openEditor('category',row)} className="border border-white/20 px-4 py-2 text-xs">Edit</button><button onClick={()=>void removeRow('category',row)} className="border border-red-400/30 px-4 py-2 text-xs text-red-300">Delete</button></div></div>)}</div>}
           {tab==='authors'&&<div className="mt-8 grid gap-3 md:grid-cols-2">{data.authors.map(row=><div key={row.id} className="flex items-center gap-4 border border-white/10 bg-[#151515] p-4">{row.avatar_url?<img src={row.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover"/>:<div className="grid h-14 w-14 place-items-center rounded-full bg-white/10">{row.name?.slice(0,1)}</div>}<div className="min-w-0 flex-1"><p className="font-semibold">{row.name}</p><p className="text-xs text-white/40">{row.role}</p></div><button onClick={()=>openEditor('author',row)} className="border border-white/20 px-3 py-2 text-xs">Edit</button></div>)}</div>}
           {tab==='homepage'&&<div className="mt-8 max-w-3xl border border-white/10 bg-[#151515] p-6"><p className="mb-6 text-sm text-white/45">Control the editorial hero and choose the story highlighted on the homepage.</p><div className="space-y-5">{field('Hero eyebrow','hero_eyebrow',settings.hero_eyebrow,v=>setSettings({...settings,hero_eyebrow:v}))}{field('Hero title','hero_title',settings.hero_title,v=>setSettings({...settings,hero_title:v}))}{field('Hero description','hero_description',settings.hero_description,v=>setSettings({...settings,hero_description:v}),{multiline:true})}<label className="block text-sm text-white/70">Featured story<select value={settings.featured_article_id||''} onChange={e=>setSettings({...settings,featured_article_id:e.target.value||null})} className="mt-2 w-full border border-white/15 bg-black p-3 text-white"><option value="">Use default featured story</option>{data.articles.filter(a=>a.status==='published').map(a=><option key={a.id} value={a.id}>{a.title}</option>)}</select></label><button onClick={()=>void saveSettings()} disabled={busy} className="inline-flex items-center gap-2 bg-[#d14f1f] px-5 py-3 text-xs font-bold uppercase tracking-widest"><Save size={15}/> Save homepage</button></div></div>}
