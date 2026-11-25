@@ -21,7 +21,7 @@ const PRINCIPLES = [
 export function AboutPage() {
   useDocumentMeta(
     'About | THE OTHER PERSON',
-    'THE OTHER PERSON is an independent space for stories, opinions, design and ideas from Kerala and beyond. Read our mission and editorial philosophy.',
+    'An Indian culture and ideas platform exploring social expectations, identity, relationships, work and everyday life. Meet THE OTHER PERSON.',
   );
 
   return (
@@ -74,7 +74,7 @@ export function AboutPage() {
             <p className="eyebrow">Written by readers</p>
             <h2 className="display-heading mt-4 text-5xl md:text-7xl">Your angle belongs here</h2>
             <p className="mt-6 max-w-md text-lg leading-relaxed text-charcoal">
-              Writers, photographers and designers from across India send us their work. Every submission is read by our editorial team.
+              We want to hear from writers, photographers, illustrators and designers with a perspective to share. If you have an idea, a story or an observation that belongs in this conversation, send it our way.
             </p>
             <Link to="/contribute" className="link-underline mt-10 text-ink hover:text-orange-deep">
               Contribute to THE OTHER PERSON
@@ -91,19 +91,19 @@ export function AboutPage() {
             <div>
               <dt className="font-serif text-2xl">Privacy</dt>
               <dd className="mt-3 max-w-2xl leading-relaxed text-charcoal">
-                We only store the email addresses people give us for the newsletter and contributor submissions, and use them to respond to that request. We never sell personal data.
+                Before subscribing or submitting work, please share only the information needed for your enquiry. We will publish a clear privacy notice before collecting personal information through this site.
               </dd>
             </div>
             <div>
               <dt className="font-serif text-2xl">Contributions</dt>
               <dd className="mt-3 max-w-2xl leading-relaxed text-charcoal">
-                Contributors keep the rights to their work unless otherwise agreed in writing. Submissions must be original and must not be published elsewhere at the same time.
+                Please submit work you created and have the right to share. We will agree on publication, editing, credit and any usage permissions with contributors before publishing.
               </dd>
             </div>
             <div>
               <dt className="font-serif text-2xl">Store and returns</dt>
               <dd className="mt-3 max-w-2xl leading-relaxed text-charcoal">
-                Store products are currently shown as a catalogue. Orders are not yet taken online, so please send an enquiry by email for sizes and availability.
+                The store is currently a collection preview. Online ordering, payment, shipping and returns are not yet available.
               </dd>
             </div>
           </dl>
