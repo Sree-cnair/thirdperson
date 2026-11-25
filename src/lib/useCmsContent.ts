@@ -34,6 +34,9 @@ function mapProduct(row: any): Product {
   return {
     id: row.id,
     productKind: row.product_kind || 'physical',
+    printifyShopId: row.printify_shop_id || null,
+    printifyProductId: row.printify_product_id || null,
+    printifyVariantId: row.printify_variant_id || null,
     slug: row.slug,
     name: row.name,
     category: (row.category || (row.product_type === 'accessory' ? 'Totes' : 'Tees')) as Product['category'],
