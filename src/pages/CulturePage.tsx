@@ -13,7 +13,7 @@ const ALL = 'all';
 export function CulturePage() {
   useDocumentMeta(
     'Culture | THE OTHER PERSON',
-    'A closer look at the culture, habits, expectations and ideas that shape everyday Indian life.',
+    'A closer look at the people, habits and unspoken rules that shape everyday Indian life.',
   );
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,7 +37,7 @@ export function CulturePage() {
       <PageHero
         eyebrow="Culture"
         title="Culture"
-        intro="Culture is more than what we watch, wear or follow. It is also what we are taught to expect, what we question and what we pass on."
+        intro="Culture is what we watch, wear, repeat and pass on. It is also the comments we inherit, the rules we follow and the expectations we rarely stop to question."
       >
         <FilterChips label="Filter culture by category" options={filterOptions} value={selectedSlug} onChange={handleFilter} />
       </PageHero>
