@@ -8,8 +8,8 @@ import { NewsletterSection } from '@/components/home/NewsletterSection';
 
 export function HomePage() {
   useDocumentMeta(
-    'THE OTHER PERSON | You. Me. And the other person.',
-    'An Indian culture and ideas platform exploring log kya kahenge, social expectations, identity, everyday absurdities and the things we make.',
+    'Who is this other person anyway? | THE OTHER PERSON',
+    'Stories, opinions and creative work about the invisible audience shaping Indian everyday life — and the choices we make around them.',
   );
 
   return (
