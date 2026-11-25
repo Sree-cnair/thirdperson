@@ -31,7 +31,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink text-cream">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-6 px-5 md:px-8">
-        <Link to="/" aria-label="OTHER PEOPLE home" className="shrink-0 text-cream transition-opacity hover:opacity-80">
+        <Link to="/" aria-label="THE OTHER PERSON home" className="shrink-0 text-cream transition-opacity hover:opacity-80">
           <Wordmark />
         </Link>
 
@@ -108,7 +108,7 @@ export function SiteHeader() {
             </ul>
             <div className="mt-10 flex flex-col gap-3 font-sans text-sm text-cream/80">
               <Link to="/about" className="hover:text-lemon">
-                About OTHER PEOPLE
+                About THE OTHER PERSON
               </Link>
               <Link to="/search" className="hover:text-lemon">
                 Search the archive
