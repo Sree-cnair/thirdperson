@@ -12,16 +12,16 @@ import { useDocumentMeta } from '@/lib/useDocumentMeta';
 
 const GRAPHIC_CONCEPTS = [
   {
-    title: 'The Triangle Mark',
-    text: 'The brand accent, repeated and scaled until it becomes a texture rather than a logo.',
+    title: 'The Unsaid',
+    text: 'Short phrases and familiar reactions, turned into graphics that leave room for the reader to bring their own meaning.',
   },
   {
-    title: 'Regional Script',
-    text: 'Malayalam lettering set beside Latin capitals, asking the wearer to read across two languages.',
+    title: 'Conversation Type',
+    text: 'Typography that borrows the energy of a note, a headline or a message passed across a room.',
   },
   {
-    title: 'Street Type',
-    text: 'Condensed capitals inspired by hand-painted shop boards and wheat-paste posters.',
+    title: 'Everyday Symbols',
+    text: 'Ordinary visual cues reworked into a graphic language for the small absurdities of daily life.',
   },
 ];
 
@@ -75,7 +75,7 @@ export function FashionPage() {
         <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
           <SectionHeading eyebrow="Pattern experiments" title="Repeat" tone="dark" as="h2" />
           <p className="mt-8 max-w-xl font-serif text-xl italic text-cream/85">
-            Patterns are built from the triangle accent and tested at three scales and colourways before they reach a garment.
+            Repeats, shapes and visual rhythms give everyday observations a second life as prints, patterns and objects.
           </p>
           <div className="mt-14">
             <PatternExperiments />
