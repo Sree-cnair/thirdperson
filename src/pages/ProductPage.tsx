@@ -38,40 +38,18 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
   const guide = SIZE_GUIDES[product.category] || SIZE_GUIDES.Tees;
 
-  useEffect(() => {
-    if (document.querySelector('script[data-razorpay-checkout]')) return;
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.dataset.razorpayCheckout = 'true';
-    document.body.appendChild(script);
-  }, []);
-
   const placeOrder = async (event: FormEvent) => {
     event.preventDefault();
     if (!cmsSupabase || !product.id) { setOrderMessage('This product is not connected to the live catalogue yet.'); return; }
     if (!size && product.sizes.length > 1) { setSizeError(true); return; }
     setOrderBusy(true); setOrderMessage('');
     const { data, error } = await cmsSupabase.functions.invoke('store-checkout', {
-      body: { action: 'create-payment-order', productId: product.id, quantity: 1, size, customer, currency: 'INR' },
+      body: { action: 'create-upi-order', productId: product.id, quantity: 1, size, customer },
     });
     setOrderBusy(false);
-    if (error || data?.error) { setOrderMessage(data?.error || error?.message || 'Could not start checkout. Please try again.'); return; }
-    if (!data?.keyId || !data?.razorpayOrderId) { setOrderMessage('Checkout is being configured. Please try again later.'); return; }
-    const RazorpayCheckout = (window as any).Razorpay;
-    if (!RazorpayCheckout) { setOrderMessage('Secure checkout could not load. Refresh the page and try again.'); return; }
-    const checkout = new RazorpayCheckout({
-      key: data.keyId, amount: data.amount, currency: data.currency, name: 'THE OTHER PERSON',
-      description: product.name, order_id: data.razorpayOrderId, prefill: { name: customer.name, email: customer.email, contact: customer.phone },
-      theme: { color: '#d14f1f' },
-      handler: async (response: any) => {
-        const verified = await cmsSupabase!.functions.invoke('store-checkout', { body: { action: 'verify-payment', orderId: data.orderId, razorpayOrderId: response.razorpay_order_id, razorpayPaymentId: response.razorpay_payment_id, razorpaySignature: response.razorpay_signature } });
-        if (verified.error || verified.data?.error || !verified.data?.paid) setOrderMessage('We received the payment response but could not verify it yet. Please contact support with order ' + data.orderNumber + '.');
-        else { setOrderMessage('Payment confirmed. Your order ' + data.orderNumber + ' is placed.'); if (verified.data?.downloadUrl) setDownloadUrl(verified.data.downloadUrl); }
-      },
-      modal: { ondismiss: () => setOrderMessage('Checkout closed. Your order has not been confirmed as paid.') },
-    });
-    checkout.open();
+    if (error || data?.error) { setOrderMessage(data?.error || error?.message || 'Could not place your order request. Please try again.'); return; }
+    setOrderMessage('Your order request ' + data.orderNumber + ' has been received. We will contact you with UPI payment details. Your order will be confirmed after payment is verified.');
+    setOrderOpen(false);
   };
 
   return (
@@ -150,7 +128,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
                   </div>
                   {sizeError && (
                     <p role="alert" className="mt-3 font-sans text-sm text-error">
-                      Please choose a size before sending your enquiry.
+                      Please choose a size before placing your order.
                     </p>
                   )}
                 </fieldset>
@@ -158,7 +136,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
 
               <div className="mt-10 border-t border-ink/15 pt-8">
                 <button type="button" onClick={() => { setOrderOpen(!orderOpen); setOrderMessage(""); }} className="btn-primary w-full sm:w-auto">Buy now</button>
-                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">Secure checkout with UPI, cards and supported payment methods.</p>
+                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">Pay via UPI. We will share payment instructions after receiving your order request.</p>
                 {orderOpen && <form onSubmit={placeOrder} className="mt-6 grid gap-4 border border-ink/15 p-5">
                   <h2 className="font-serif text-2xl">Delivery details</h2>
                   <label className="text-sm">Full name<input required value={customer.name} onChange={e => setCustomer({ ...customer, name: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
@@ -174,7 +152,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
                     </div>
                   </>}
                   <p className="text-sm font-semibold">Total: {formatINR(product.price)}</p>
-                  <button disabled={orderBusy} className="btn-primary w-full disabled:opacity-50">{orderBusy ? "Starting secure checkout…" : "Continue to payment"}</button>
+                  <button disabled={orderBusy} className="btn-primary w-full disabled:opacity-50">{orderBusy ? "Submitting order…" : "Place order request"}</button>
                 </form>}
                 {orderMessage && <p role="status" className="mt-4 text-sm text-charcoal">{orderMessage}</p>}{downloadUrl && <a href={downloadUrl} className="mt-3 inline-block underline" target="_blank" rel="noreferrer">Download your digital purchase</a>}
               </div>
