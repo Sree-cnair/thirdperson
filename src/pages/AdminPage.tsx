@@ -107,7 +107,7 @@ export function AdminPage() {
   const requestPasswordReset = async () => {
     if (!cmsSupabase) { setResetNotice('The sign-in service is not configured. Please contact support.'); return; }
     const targetEmail = resetEmail.trim().toLowerCase();
-    if (!targetEmail || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(targetEmail)) {
+    if (!targetEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(targetEmail)) {
       setResetNotice('Enter the email address for your admin account.');
       return;
     }
