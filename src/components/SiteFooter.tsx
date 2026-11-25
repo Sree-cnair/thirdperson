@@ -10,7 +10,7 @@ export function SiteFooter() {
     <footer className="bg-ink text-cream">
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-16 md:px-8 md:py-20 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <Link to="/" aria-label="OTHER PEOPLE home" className="inline-block transition-opacity hover:opacity-80">
+          <Link to="/" aria-label="THE OTHER PERSON home" className="inline-block transition-opacity hover:opacity-80">
             <Wordmark className="text-3xl" />
           </Link>
           <p className="mt-6 max-w-xs font-serif text-2xl italic leading-snug text-cream">{TAGLINE}</p>
@@ -74,7 +74,7 @@ export function SiteFooter() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1400px] flex-col gap-3 px-5 py-6 font-sans text-xs text-cream/70 md:flex-row md:items-center md:justify-between md:px-8">
-          <p>&copy; {year} OTHER PEOPLE. All rights reserved.</p>
+          <p>&copy; {year} THE OTHER PERSON. All rights reserved.</p>
           <p>Independent. Kerala, India.</p>
         </div>
       </div>
