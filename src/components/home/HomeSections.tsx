@@ -11,16 +11,16 @@ export function HomeHero() {
     <section className="relative overflow-hidden bg-ink text-cream">
       <div className="mx-auto grid max-w-[1400px] gap-10 px-5 pb-16 pt-12 md:px-8 md:pt-16 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-12 lg:items-end lg:gap-12 lg:pb-20 lg:pt-16">
         <div className="order-2 flex flex-col lg:order-1 lg:col-span-7">
-          <p className="eyebrow animate-fade-up !text-orange">{settings?.hero_eyebrow || 'Issue 01 / Kerala, India'}</p>
+          <p className="eyebrow animate-fade-up !text-orange">{settings?.hero_eyebrow || 'An Indian culture and ideas platform'}</p>
           <h1 className="display-heading mt-6 animate-fade-up text-[4.25rem] leading-[0.9] [animation-delay:100ms] sm:text-[6.5rem] lg:text-[7.5rem] xl:text-[9.5rem]">
-            {settings?.hero_title || 'Culture from a different angle.'}
+            {settings?.hero_title || 'There are always three people.'}
           </h1>
           <p className="mt-8 max-w-md animate-fade-up font-serif text-xl italic leading-relaxed text-cream/85 [animation-delay:200ms] md:text-2xl">
-            {settings?.hero_description || 'Stories, opinions and ideas from Kerala, India and beyond.'}
+            {settings?.hero_description || 'You. Me. And the other person. The invisible audience in our heads, with an opinion on absolutely everything.'}
           </p>
           <div className="mt-10 animate-fade-up [animation-delay:300ms]">
             <Link to="/stories" className="btn-primary">
-              Explore stories
+              Meet the other person
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </div>
@@ -62,8 +62,8 @@ export function LatestStories() {
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28" aria-labelledby="latest-heading">
       <SectionHeading
-        eyebrow="Latest stories"
-        title="The Latest"
+        eyebrow="From the editorial desk"
+        title="What are we thinking about?"
         as="h2"
         action={
           <Link to="/stories" className="link-underline text-ink hover:text-orange-deep">
