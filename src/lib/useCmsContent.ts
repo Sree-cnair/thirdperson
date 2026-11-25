@@ -32,6 +32,8 @@ function mapProduct(row: any): Product {
     ? gallery.map((image: any) => ({ src: image.src, alt: image.alt || row.name }))
      : row.image_url ? [{ src: row.image_url, alt: row.name }] : PRODUCTS[0].images;
   return {
+    id: row.id,
+    productKind: row.product_kind || 'physical',
     slug: row.slug,
     name: row.name,
     category: (row.category || (row.product_type === 'accessory' ? 'Totes' : 'Tees')) as Product['category'],
@@ -67,8 +69,8 @@ export function useActiveProducts(): Product[] {
     if (!cmsSupabase) return;
     cmsSupabase.from('products').select('*').eq('status', 'active').order('created_at', { ascending: false })
       .then(({ data, error }) => {
-        if (!active || error || !data?.length) return;
-        setProducts(data.map(mapProduct));
+        if (!active || error) return;
+        setProducts((data ?? []).map(mapProduct));
       });
     return () => { active = false; };
   }, []);
