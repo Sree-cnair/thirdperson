@@ -2,9 +2,9 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const ROLES = [
-  { title: 'Writers', text: 'Essays, reviews and reported pieces from every corner of the country.' },
-  { title: 'Designers', text: 'Visual experiments, pattern studies and the posters on your street.' },
-  { title: 'Readers', text: 'People who argue back, leave comments and keep the conversation honest.' },
+  { title: 'Writers', text: 'Personal essays, sharp observations, cultural commentary and stories that make people think.' },
+  { title: 'Designers', text: 'Illustrations, photography, graphic experiments and ideas with a point of view.' },
+  { title: 'Readers', text: 'Curious people with questions, counterpoints and stories of their own.' },
 ];
 
 export function CommunityBanner() {
@@ -14,14 +14,14 @@ export function CommunityBanner() {
         <div className="lg:col-span-7">
           <p className="eyebrow">Community</p>
           <h2 id="community-heading" className="display-heading mt-4 text-5xl md:text-7xl lg:text-8xl">
-            Every perspective <span className="text-orange-deep">has a place.</span>
+            There is room for <span className="text-orange-deep">another point of view.</span>
           </h2>
           <p className="mt-8 max-w-xl text-base leading-relaxed text-charcoal md:text-lg">
-            PAKARAM is built by the people who read it. If you have an argument, a story or a design worth sharing, we want to hear it.
+            THE OTHER PERSON grows through the people who question, challenge and add to the conversation. Have a story, an opinion or an idea worth putting out there? Bring it to us.
           </p>
           <div className="mt-10">
             <Link to="/contribute" className="btn-primary">
-              Contribute a story
+              Bring your perspective
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </div>
