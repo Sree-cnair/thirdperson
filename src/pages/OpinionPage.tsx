@@ -6,9 +6,9 @@ export function OpinionPage() {
       section="opinion"
       eyebrow="Opinion / Say what you mean"
       title="Opinion"
-      intro="The thoughts we usually edit before saying out loud. Agree, disagree, add your own angle."
+      intro="The opinions we hear, the ones we hold back and the assumptions worth questioning. Agree, disagree, bring another angle."
       metaTitle="Opinion | THE OTHER PERSON"
-      metaDescription="Independent perspectives on social expectations, identity, relationships, culture and the everyday rules we rarely question."
+      metaDescription="Independent perspectives on the invisible rules and imagined audiences shaping contemporary Indian life."
       tone="opinion"
     />
   );
