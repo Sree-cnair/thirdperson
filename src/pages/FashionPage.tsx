@@ -1,0 +1,119 @@
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import { byDateDesc } from '@/data/articles';
+import { useActiveProducts, usePublishedArticles } from '@/lib/useCmsContent';
+
+import { ArticleCard } from '@/components/ArticleCard';
+import { PageHero } from '@/components/PageHero';
+import { ProductCard } from '@/components/ProductCard';
+import { PatternExperiments, TypographyPosters } from '@/components/fashion/FashionExperiments';
+import { SectionHeading } from '@/components/SectionHeading';
+import { useDocumentMeta } from '@/lib/useDocumentMeta';
+
+const GRAPHIC_CONCEPTS = [
+  {
+    title: 'The Triangle Mark',
+    text: 'The brand accent, repeated and scaled until it becomes a texture rather than a logo.',
+  },
+  {
+    title: 'Regional Script',
+    text: 'Malayalam lettering set beside Latin capitals, asking the wearer to read across two languages.',
+  },
+  {
+    title: 'Street Type',
+    text: 'Condensed capitals inspired by hand-painted shop boards and wheat-paste posters.',
+  },
+];
+
+export function FashionPage() {
+  useDocumentMeta(
+    'Fashion and Design | PAKARAM',
+    'Original graphic concepts, pattern experiments, typography prints and fashion stories from PAKARAM.',
+  );
+
+  const articles = usePublishedArticles();
+  const products = useActiveProducts();
+  const fashionStories = articles.filter((article) => article.category === 'Fashion' || article.category === 'Design')
+    .sort(byDateDesc)
+    .slice(0, 3);
+
+  return (
+    <>
+      <PageHero
+        eyebrow="Fashion and design"
+        title="Fashion"
+        intro="A fashion label that thinks like an editor. Graphic ideas, pattern studies and the stories behind every print."
+      />
+
+      <section className="bg-ink text-cream" aria-labelledby="typography-heading">
+        <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
+          <SectionHeading eyebrow="Typography" title="Words worn" tone="dark" as="h2" />
+          <div className="mt-14">
+            <TypographyPosters />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cream" aria-labelledby="concepts-heading">
+        <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
+          <SectionHeading eyebrow="Original graphic concepts" title="Concepts" as="h2" />
+          <ol className="mt-14 grid gap-12 md:grid-cols-3">
+            {GRAPHIC_CONCEPTS.map((concept, index) => (
+              <li key={concept.title} className="flex flex-col gap-4 border-t border-ink pt-6">
+                <span className="font-display text-6xl text-orange-deep">0{index + 1}</span>
+                <h3 className="font-serif text-3xl">{concept.title}</h3>
+                <p className="leading-relaxed text-charcoal">{concept.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-14 font-malayalam text-3xl text-ink">സ്വാഗതം</p>
+          <p className="mt-2 font-sans text-xs uppercase tracking-label text-charcoal-mid">Welcome, in Malayalam</p>
+        </div>
+      </section>
+
+      <section className="bg-charcoal text-cream" aria-labelledby="patterns-heading">
+        <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
+          <SectionHeading eyebrow="Pattern experiments" title="Repeat" tone="dark" as="h2" />
+          <p className="mt-8 max-w-xl font-serif text-xl italic text-cream/85">
+            Patterns are built from the triangle accent and tested at three scales and colourways before they reach a garment.
+          </p>
+          <div className="mt-14">
+            <PatternExperiments />
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-cream" aria-labelledby="fashion-stories-heading">
+        <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
+          <SectionHeading eyebrow="Fashion stories" title="Read the thread" as="h2" />
+          <div className="mt-14 grid gap-x-8 gap-y-12 md:grid-cols-3">
+            {fashionStories.map((article) => (
+              <ArticleCard key={article.slug} article={article} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-ink/15 bg-paper" aria-labelledby="collection-heading">
+        <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
+          <SectionHeading
+            eyebrow="Collection preview"
+            title="The first drop"
+            as="h2"
+            action={
+              <Link to="/store" className="link-underline text-ink hover:text-orange-deep">
+                Full catalogue
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+            }
+          />
+          <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+            {products.slice(0, 4).map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
