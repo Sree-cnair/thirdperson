@@ -31,6 +31,8 @@ export interface ProductImage {
 export type ProductCategory = 'Tees' | 'Totes';
 
 export interface Product {
+  id?: string;
+  productKind?: 'physical' | 'digital';
   slug: string;
   name: string;
   category: ProductCategory;
