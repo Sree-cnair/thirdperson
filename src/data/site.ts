@@ -1,8 +1,8 @@
 import { Instagram, Twitter, Youtube } from 'lucide-react';
 
 export const SITE_NAME = 'THE OTHER PERSON';
-export const TAGLINE = 'People. Ideas. Culture. Everything else.';
-export const CONTACT_EMAIL = 'hello@pakaram.in';
+export const TAGLINE = 'You. Me. And the other person.';
+export const CONTACT_EMAIL = '';
 
 export const NAV_LINKS = [
   { label: 'Stories', to: '/stories' },
