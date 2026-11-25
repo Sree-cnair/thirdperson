@@ -1,7 +1,6 @@
-import { useState, type MouseEvent, type ReactNode } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, Mail } from 'lucide-react';
-import { CONTACT_EMAIL } from '@/data/site';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { SIZE_GUIDES } from '@/data/products';
 import { useActiveProducts } from '@/lib/useCmsContent';
 import type { Product } from '@/data/types';
@@ -9,6 +8,11 @@ import { ProductCard } from '@/components/ProductCard';
 import { NotFoundContent } from '@/pages/NotFoundPage';
 import { formatINR } from '@/lib/format';
 import { useDocumentMeta } from '@/lib/useDocumentMeta';
+import { cmsSupabase } from '@/lib/cmsSupabase';
+
+const BUSINESS_UPI_ID = 'sreejithacn0-2@okaxis';
+const BUSINESS_UPI_NAME = 'THE OTHER PERSON';
+const BUSINESS_UPI_QR = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVgAAAFYAQAAAAA+F9ntAAACd0lEQVR4nO2ay27jQAwEuxb6/1/uPZAcSTkFEpIlvRPHxsiuQ4MY8I317b8/30c3u9nNfgAr2+skyfmKZ+cxuA56p7GHpLAhwhJGCOfZXr/20DuNPSRJhBUxkiRLxrJEfISNO+idxh63J8JFhFUtLH5BwyezV/uGU6h/85XtoHcaG/bNIGYhg7FwvHz+2kLvNPaQVE4AYyRHdKvvThfRQe80Fl/PVLKQoQ1dy7sOeqexh8rG4RQyW8DKax1mln9QwyezlZ9ZxsjYkQmzbjLa+dkr1tjAcsPrHou8umbXF89YfKsufFYU+IxucZ076J3JWoiKZhCtiHq20xX30TuHXbEtnqp6y1tbF5kd3x6yWV+EPVeyxplBGElm+4fnLMjhEkDRlxSOr4Vcka+L3kns6j+sUqKCXHQqz45aD73TWKpSc7Z/danpMqPY/vcdayERZiTOhNcIu5LXuIveeWx1yYiAZuXYwhay00v00TuHvWRm2WhYffVqALuStQ56R7JVo8U5nYVy+GbkGIK20TuIvd3fc6yZH0q3oX1/X7CVgkV/Pfo6mUc4XPK+v+9YKL+bI07AMbCP+7vj20N2zd9yeFFGxlKuQqwBXAe9M9m1USKqXK4sbXmMTnqnsbkTVU3Kcg+LYvvfdywRxzIfWw1gBFqGbqR3DHubH8cM7iw0Mi/b+1HP2fv+ZFYUqs9ap7T3/uQz9ro/WSVcNijPC7znQ4/Z2/6kysT11pk8/KCG/4elmsFeMU6qZlpDvf3Z48tz9coug4s17+ygdyabQQ7bsUuCck7P2jHppHcOe9ufFMsXYOcCz5nAddA7jb3mv/9Kw2Y3u9me7F+HqTO70N6PuQAAAABJRU5ErkJggg==';
 
 export function ProductPage() {
   const { slug = '' } = useParams();
@@ -16,8 +20,8 @@ export function ProductPage() {
   const product = products.find((item) => item.slug === slug);
 
   useDocumentMeta(
-    product ? `${product.name} | PAKARAM Store` : 'Product not found | PAKARAM',
-    product?.tagline ?? 'This product could not be found in the PAKARAM store.',
+    product ? `${product.name} | THE OTHER PERSON Store` : 'Product not found | THE OTHER PERSON',
+    product?.tagline ?? 'This product could not be found in the THE OTHER PERSON store.',
   );
 
   if (!product) return <NotFoundContent />;
@@ -29,21 +33,29 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const [activeImage, setActiveImage] = useState(0);
   const [size, setSize] = useState<string | null>(product.sizes.length === 1 ? product.sizes[0] : null);
   const [sizeError, setSizeError] = useState(false);
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [orderBusy, setOrderBusy] = useState(false);
+  const [orderMessage, setOrderMessage] = useState('');
+  const [orderNumber, setOrderNumber] = useState('');
+  const [downloadUrl, setDownloadUrl] = useState('');
+  const [customer, setCustomer] = useState({ name: '', email: '', phone: '', address1: '', city: '', region: '', zip: '', country: 'India' });
   const image = product.images[activeImage];
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
-  const guide = SIZE_GUIDES[product.category];
+  const guide = SIZE_GUIDES[product.category] || SIZE_GUIDES.Tees;
 
-  const enquiryHref = (() => {
-    const subject = `Order enquiry: ${product.name}${size ? ` (${size})` : ''}`;
-    const body = `Hello PAKARAM,\n\nI would like to enquire about ${product.name}${size ? `, size ${size}` : ''}.\n\nThank you.`;
-    return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  })();
-
-  const handleEnquiry = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!size) {
-      event.preventDefault();
-      setSizeError(true);
-    }
+  const placeOrder = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!cmsSupabase || !product.id) { setOrderMessage('This product is not connected to the live catalogue yet.'); return; }
+    if (!size && product.sizes.length > 1) { setSizeError(true); return; }
+    setOrderBusy(true); setOrderMessage('');
+    const { data, error } = await cmsSupabase.functions.invoke('store-checkout', {
+      body: { action: 'create-upi-order', productId: product.id, quantity: 1, size, customer },
+    });
+    setOrderBusy(false);
+    if (error || data?.error) { setOrderMessage(data?.error || error?.message || 'Could not place your order request. Please try again.'); return; }
+    setOrderNumber(data.orderNumber || '');
+    setOrderMessage('Your order request has been received. Please complete the UPI payment using the details below. Your order is confirmed only after we verify the payment.');
+    setOrderOpen(false);
   };
 
   return (
@@ -122,24 +134,33 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
                   </div>
                   {sizeError && (
                     <p role="alert" className="mt-3 font-sans text-sm text-error">
-                      Please choose a size before sending your enquiry.
+                      Please choose a size before placing your order.
                     </p>
                   )}
                 </fieldset>
               )}
 
               <div className="mt-10 border-t border-ink/15 pt-8">
-                <a
-                  href={enquiryHref}
-                  onClick={handleEnquiry}
-                  className="btn-primary w-full sm:w-auto"
-                >
-                  <Mail aria-hidden="true" className="h-4 w-4" />
-                  Send order enquiry
-                </a>
-                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">
-                  Orders are not taken online yet. Your enquiry opens an email to our team, who will confirm availability and next steps.
-                </p>
+                <button type="button" onClick={() => { setOrderOpen(!orderOpen); setOrderMessage(""); }} className="btn-primary w-full sm:w-auto">Buy now</button>
+                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">Pay securely by UPI after submitting your order request. We will verify the payment manually.</p>
+                {orderOpen && <form onSubmit={placeOrder} className="mt-6 grid gap-4 border border-ink/15 p-5">
+                  <h2 className="font-serif text-2xl">Delivery details</h2>
+                  <label className="text-sm">Full name<input required value={customer.name} onChange={e => setCustomer({ ...customer, name: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                  <label className="text-sm">Email<input required type="email" value={customer.email} onChange={e => setCustomer({ ...customer, email: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                  <label className="text-sm">Phone<input required value={customer.phone} onChange={e => setCustomer({ ...customer, phone: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                  {product.productKind !== "digital" && <>
+                    <label className="text-sm">Address<input required value={customer.address1} onChange={e => setCustomer({ ...customer, address1: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <label className="text-sm">City<input required value={customer.city} onChange={e => setCustomer({ ...customer, city: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                      <label className="text-sm">State<input required value={customer.region} onChange={e => setCustomer({ ...customer, region: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                      <label className="text-sm">PIN code<input required value={customer.zip} onChange={e => setCustomer({ ...customer, zip: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                      <label className="text-sm">Country<input required value={customer.country} onChange={e => setCustomer({ ...customer, country: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                    </div>
+                  </>}
+                  <p className="text-sm font-semibold">Total: {formatINR(product.price)}</p>
+                  <button disabled={orderBusy} className="btn-primary w-full disabled:opacity-50">{orderBusy ? "Submitting order…" : "Place order request"}</button>
+                </form>}
+                {orderMessage && <div role="status" className="mt-4 border border-ink/20 p-4 text-sm text-charcoal"><p>{orderMessage}</p>{orderNumber && <div className="mt-4 space-y-2"><p><strong>Order reference:</strong> {orderNumber}</p><p><strong>Amount:</strong> {formatINR(product.price)}</p><p><strong>UPI ID:</strong> <span className="font-semibold">{BUSINESS_UPI_ID}</span></p><img src={BUSINESS_UPI_QR} alt="THE OTHER PERSON UPI payment QR code" className="mx-auto mt-3 h-56 w-56 border border-ink/10 bg-white p-2" /><button type="button" onClick={() => navigator.clipboard?.writeText(BUSINESS_UPI_ID)} className="underline underline-offset-4">Copy UPI ID</button><a className="block underline underline-offset-4" href={`upi://pay?pa=${encodeURIComponent(BUSINESS_UPI_ID)}&pn=${encodeURIComponent(BUSINESS_UPI_NAME)}&am=${encodeURIComponent(String(product.price))}&cu=INR&tn=${encodeURIComponent(`THE OTHER PERSON ${orderNumber}`)}`}>Open UPI app to pay</a><p className="text-xs text-charcoal-mid">After paying, keep your UPI transaction reference. We will confirm the order after checking the payment.</p></div>}</div>}{downloadUrl && <a href={downloadUrl} className="mt-3 inline-block underline" target="_blank" rel="noreferrer">Download your digital purchase</a>}
               </div>
 
               <div className="mt-10 divide-y divide-ink/15 border-y border-ink/15">
