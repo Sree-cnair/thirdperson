@@ -6,7 +6,7 @@ import { useActiveProducts, usePublishedArticles } from '@/lib/useCmsContent';
 import { ArticleCard } from '@/components/ArticleCard';
 import { PageHero } from '@/components/PageHero';
 import { ProductCard } from '@/components/ProductCard';
-import { PatternExperiments, TypographyPosters } from '@/components/fashion/FashionExperiments';
+import { PatternExperiments, TypographyPosters } from '@/components/fashion/Style, identity & expressionExperiments';
 import { SectionHeading } from '@/components/SectionHeading';
 import { useDocumentMeta } from '@/lib/useDocumentMeta';
 
@@ -40,7 +40,7 @@ export function FashionPage() {
   return (
     <>
       <PageHero
-        eyebrow="Fashion and design"
+        eyebrow="Objects & expression"
         title="Fashion"
         intro="A creative label where observations become graphics, words become wearable ideas and everyday culture becomes something you can take with you."
       />
