@@ -29,6 +29,10 @@ export function AdminPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [recoveryMode, setRecoveryMode] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetNotice, setResetNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>('overview');
   const [data, setData] = useState<Record<string, Row[]>>({ articles: [], contributions: [], products: [], categories: [], authors: [], newsletter_subscribers: [] });
@@ -70,7 +74,8 @@ export function AdminPage() {
       if (session?.user) void verifyUser(session.user.id, session.user.email || '');
       else setReady(true);
     });
-    const { data: listener } = cmsSupabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = cmsSupabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
       if (!active) return;
       if (session?.user) void verifyUser(session.user.id, session.user.email || '');
       else setAdmin(null);
@@ -85,6 +90,28 @@ export function AdminPage() {
     const { data: result, error } = await cmsSupabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) setLoginError(error.message);
     else if (result.user) await verifyUser(result.user.id, result.user.email || email);
+    setBusy(false);
+  };
+
+  const requestPasswordReset = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!cmsSupabase) return;
+    setBusy(true); setResetNotice(''); setLoginError('');
+    const { error } = await cmsSupabase.auth.resetPasswordForEmail(resetEmail.trim(), {
+      redirectTo: window.location.origin + '/admin',
+    });
+    setResetNotice(error ? error.message : 'If an account exists for that email, a password-reset link has been sent. Check your inbox and spam folder.');
+    setBusy(false);
+  };
+
+  const saveNewPassword = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!cmsSupabase) return;
+    if (newPassword.length < 8) { setResetNotice('Use a password with at least 8 characters.'); return; }
+    setBusy(true); setResetNotice('');
+    const { error } = await cmsSupabase.auth.updateUser({ password: newPassword });
+    if (error) setResetNotice(error.message);
+    else { setRecoveryMode(false); setNewPassword(''); setResetNotice('Password updated. You can now sign in with your new password.'); await cmsSupabase.auth.signOut(); }
     setBusy(false);
   };
 
@@ -164,6 +191,18 @@ export function AdminPage() {
 
   if (!ready) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] grid place-items-center">Loading THE OTHER PERSON Studio…</div>;
   if (!configured) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] p-8 grid place-items-center"><div className="max-w-lg"><p className="text-[#d14f1f] text-xs tracking-[.2em] uppercase">THE OTHER PERSON Studio</p><h1 className="mt-3 text-4xl font-bold">Connection needed</h1><p className="mt-4 text-white/70">Add VITE_CMS_SUPABASE_URL and VITE_CMS_SUPABASE_PUBLISHABLE_KEY in the Render environment variables, then reload the site.</p></div></div>;
+  if (recoveryMode) return (
+    <main className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] flex items-center justify-center px-5 py-12">
+      <form onSubmit={saveNewPassword} className="w-full max-w-md border border-white/15 bg-[#151515] p-8 md:p-10">
+        <p className="text-[#d14f1f] text-xs font-semibold uppercase tracking-[.22em]">THE OTHER PERSON Studio</p>
+        <h1 className="mt-3 text-3xl font-black">Set a new password</h1>
+        <label className="block mt-8 text-sm">New password<input required minLength={8} type="password" autoComplete="new-password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
+        {resetNotice && <p role="status" className="mt-4 text-sm text-[#ffb69f]">{resetNotice}</p>}
+        <button disabled={busy} className="mt-7 w-full bg-[#d14f1f] px-5 py-4 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50">{busy ? 'Updating…' : 'Update password'}</button>
+      </form>
+    </main>
+  );
+
   if (!admin) return (
     <main className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] flex items-center justify-center px-5 py-12">
       <form onSubmit={signIn} className="w-full max-w-md border border-white/15 bg-[#151515] p-8 md:p-10">
@@ -174,7 +213,15 @@ export function AdminPage() {
         <label className="block mt-8 text-sm">Email<input required type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
         <label className="block mt-5 text-sm">Password<input required type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
         {loginError && <p role="alert" className="mt-4 text-sm text-[#ff9b89]">{loginError}</p>}
+        {resetNotice && <p role="status" className="mt-4 text-sm text-[#ffb69f]">{resetNotice}</p>}
         <button disabled={busy} className="mt-7 w-full bg-[#d14f1f] px-5 py-4 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50">{busy ? 'Signing in…' : 'Enter Studio'}</button>
+        <button type="button" onClick={()=>{setResetEmail(email);setResetNotice('');setLoginError('');document.getElementById('admin-reset-panel')?.classList.toggle('hidden');}} className="mt-5 text-xs text-[#f18b63] underline">Forgot password?</button>
+        <div id="admin-reset-panel" className="hidden mt-4 border border-white/10 p-4">
+          <form onSubmit={requestPasswordReset}>
+            <label className="block text-sm">Email for reset link<input required type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
+            <button disabled={busy} className="mt-4 w-full border border-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-50">{busy ? 'Sending…' : 'Send reset link'}</button>
+          </form>
+        </div>
         <p className="mt-5 text-xs leading-relaxed text-white/40">Access is restricted to accounts explicitly added by a THE OTHER PERSON administrator.</p>
       </form>
     </main>
