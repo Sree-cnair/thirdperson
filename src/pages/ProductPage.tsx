@@ -32,6 +32,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderMessage, setOrderMessage] = useState('');
+  const [downloadUrl, setDownloadUrl] = useState('');
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '', address1: '', city: '', region: '', zip: '', country: 'India' });
   const image = product.images[activeImage];
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
@@ -66,7 +67,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
       handler: async (response: any) => {
         const verified = await cmsSupabase!.functions.invoke('store-checkout', { body: { action: 'verify-payment', orderId: data.orderId, razorpayOrderId: response.razorpay_order_id, razorpayPaymentId: response.razorpay_payment_id, razorpaySignature: response.razorpay_signature } });
         if (verified.error || verified.data?.error || !verified.data?.paid) setOrderMessage('We received the payment response but could not verify it yet. Please contact support with order ' + data.orderNumber + '.');
-        else setOrderMessage('Payment confirmed. Your order ' + data.orderNumber + ' is placed. We will email your order updates.');
+        else { setOrderMessage('Payment confirmed. Your order ' + data.orderNumber + ' is placed.'); if (verified.data?.downloadUrl) setDownloadUrl(verified.data.downloadUrl); }
       },
       modal: { ondismiss: () => setOrderMessage('Checkout closed. Your order has not been confirmed as paid.') },
     });
@@ -175,7 +176,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
                   <p className="text-sm font-semibold">Total: {formatINR(product.price)}</p>
                   <button disabled={orderBusy} className="btn-primary w-full disabled:opacity-50">{orderBusy ? "Starting secure checkout…" : "Continue to payment"}</button>
                 </form>}
-                {orderMessage && <p role="status" className="mt-4 text-sm text-charcoal">{orderMessage}</p>}
+                {orderMessage && <p role="status" className="mt-4 text-sm text-charcoal">{orderMessage}</p>}{downloadUrl && <a href={downloadUrl} className="mt-3 inline-block underline" target="_blank" rel="noreferrer">Download your digital purchase</a>}
               </div>
 
               <div className="mt-10 divide-y divide-ink/15 border-y border-ink/15">
