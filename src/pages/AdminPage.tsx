@@ -424,9 +424,9 @@ export function AdminPage() {
               {row.payment_reference&&<p className="mt-2 text-xs text-white/50">Payment reference: {row.payment_reference}</p>}
               {row.tracking_url&&<a className="mt-2 inline-block text-xs text-[#f18b63] underline" href={row.tracking_url} target="_blank" rel="noreferrer">Tracking link</a>}
               <div className="mt-4 flex flex-wrap gap-2">
-                <button onClick={()=>void updateOrder(row,{payment_status:'verified',fulfilment_status:'ready_to_deliver'})} className="border border-white/20 px-3 py-2 text-xs">Mark paid</button>
+                {row.payment_method!=='razorpay'&&row.payment_status==='pending'&&<button onClick={()=>void updateOrder(row,{payment_status:'verified',fulfilment_status:'ready_to_deliver'})} className="border border-white/20 px-3 py-2 text-xs">Mark paid manually</button>}
                 <button onClick={()=>void updateOrder(row,{payment_status:'rejected',fulfilment_status:'cancelled'})} className="border border-red-400/30 px-3 py-2 text-xs text-red-300">Reject / cancel</button>
-                <button onClick={()=>void updateOrder(row,{fulfilment_status:'delivered'})} className="border border-white/20 px-3 py-2 text-xs">Mark delivered</button>
+                {row.payment_status==='verified'&&!row.printify_order_id&&row.product_kind!=='digital'&&<button disabled={printifyBusy} onClick={()=>void createPrintifyOrder(row)} className="bg-[#d14f1f] px-3 py-2 text-xs font-bold disabled:opacity-50">Create Printify order</button>}{row.payment_status==='verified'&&row.printify_order_id&&<button disabled={printifyBusy} onClick={()=>void sendPrintifyToProduction(row)} className="border border-[#d14f1f] px-3 py-2 text-xs text-[#f18b63] disabled:opacity-50">Send to production</button>}<button onClick={()=>void updateOrder(row,{fulfilment_status:'delivered'})} className="border border-white/20 px-3 py-2 text-xs">Mark delivered</button>
               </div>
             </article>)}
             {!data.store_orders.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No customer orders yet. New website orders will appear here.</p>}
