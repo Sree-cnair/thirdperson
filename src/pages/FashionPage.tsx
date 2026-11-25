@@ -6,7 +6,7 @@ import { useActiveProducts, usePublishedArticles } from '@/lib/useCmsContent';
 import { ArticleCard } from '@/components/ArticleCard';
 import { PageHero } from '@/components/PageHero';
 import { ProductCard } from '@/components/ProductCard';
-import { PatternExperiments, TypographyPosters } from '@/components/fashion/Style, identity & expressionExperiments';
+import { PatternExperiments, TypographyPosters } from '@/components/fashion/FashionExperiments';
 import { SectionHeading } from '@/components/SectionHeading';
 import { useDocumentMeta } from '@/lib/useDocumentMeta';
 
