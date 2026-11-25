@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { SIZE_GUIDES } from '@/data/products';
@@ -36,6 +36,15 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const image = product.images[activeImage];
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
   const guide = SIZE_GUIDES[product.category];
+
+  useEffect(() => {
+    if (document.querySelector('script[data-razorpay-checkout]')) return;
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.dataset.razorpayCheckout = 'true';
+    document.body.appendChild(script);
+  }, []);
 
   const placeOrder = async (event: FormEvent) => {
     event.preventDefault();
