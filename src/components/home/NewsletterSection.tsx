@@ -7,10 +7,10 @@ export function NewsletterSection() {
         <div className="lg:col-span-6">
           <p className="eyebrow !text-orange">Newsletter</p>
           <h2 id="newsletter-heading" className="display-heading mt-4 text-5xl md:text-7xl">
-            A little less noise. <span className="text-orange">A better question.</span>
+            Who is this <span className="text-orange">other person anyway?</span>
           </h2>
           <p className="mt-6 max-w-md font-serif text-lg italic leading-relaxed text-cream/80">
-            A note from our side of the conversation: new stories, opinions, cultural observations and first looks at things we are making.
+            A thoughtful dispatch of stories, opinions and cultural observations about the people whose imagined opinions follow us around.
           </p>
         </div>
         <div className="lg:col-span-6">
