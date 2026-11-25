@@ -4,11 +4,11 @@ export function OpinionPage() {
   return (
     <ArticleListingPage
       section="opinion"
-      eyebrow="Opinion / Independent perspectives"
+      eyebrow="Opinion / Say what you mean"
       title="Opinion"
-      intro="Arguments, counterpoints and strong takes. Not every story has one side."
-      metaTitle="Opinion | OTHER PEOPLE"
-      metaDescription="Independent opinions, arguments and perspectives on culture, society, fashion and the ideas shaping everyday life."
+      intro="The thoughts we usually edit before saying out loud. Agree, disagree, add your own angle."
+      metaTitle="Opinion | THE OTHER PERSON"
+      metaDescription="Independent perspectives on social expectations, identity, relationships, culture and the everyday rules we rarely question."
       tone="opinion"
     />
   );
