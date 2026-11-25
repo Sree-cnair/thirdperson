@@ -56,7 +56,7 @@ export function ContributeForm() {
         <p className="eyebrow">Received</p>
         <h2 className="display-heading mt-4 text-5xl">Thank you.</h2>
         <p className="mt-6 max-w-md text-lg leading-relaxed text-charcoal">
-          Your submission has reached the PAKARAM editorial team. We review every piece before it is published, and we will reply to the email address you provided.
+          Your submission has reached the THE OTHER PERSON editorial team. We review every piece before it is published, and we will reply to the email address you provided.
         </p>
         <button type="button" onClick={() => setStatus('idle')} className="btn-outline mt-10">
           Submit another piece
@@ -139,7 +139,7 @@ export function ContributeForm() {
         <label className="flex cursor-pointer items-start gap-4">
           <input type="checkbox" checked={values.originalityConfirmed} onChange={(e) => update('originalityConfirmed', e.target.checked)} aria-invalid={!!errors.originalityConfirmed} aria-describedby={describedBy('originalityConfirmed')} className="mt-1 h-5 w-5 shrink-0 accent-orange-deep" />
           <span className="font-sans text-sm leading-relaxed text-charcoal">
-            I confirm this work is original, written by me, and that I have permission to share any images or quotes it contains. I agree that PAKARAM may edit it for publication.
+            I confirm this work is original, written by me, and that I have permission to share any images or quotes it contains. I agree that THE OTHER PERSON may edit it for publication.
           </span>
         </label>
         {errorText('originalityConfirmed')}
