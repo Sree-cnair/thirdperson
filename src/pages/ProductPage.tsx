@@ -1,7 +1,6 @@
-import { useState, type MouseEvent, type ReactNode } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, Mail } from 'lucide-react';
-import { CONTACT_EMAIL } from '@/data/site';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { SIZE_GUIDES } from '@/data/products';
 import { useActiveProducts } from '@/lib/useCmsContent';
 import type { Product } from '@/data/types';
@@ -9,6 +8,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { NotFoundContent } from '@/pages/NotFoundPage';
 import { formatINR } from '@/lib/format';
 import { useDocumentMeta } from '@/lib/useDocumentMeta';
+import { cmsSupabase } from '@/lib/cmsSupabase';
 
 export function ProductPage() {
   const { slug = '' } = useParams();
@@ -29,21 +29,39 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const [activeImage, setActiveImage] = useState(0);
   const [size, setSize] = useState<string | null>(product.sizes.length === 1 ? product.sizes[0] : null);
   const [sizeError, setSizeError] = useState(false);
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [orderBusy, setOrderBusy] = useState(false);
+  const [orderMessage, setOrderMessage] = useState('');
+  const [customer, setCustomer] = useState({ name: '', email: '', phone: '', address1: '', city: '', region: '', zip: '', country: 'India' });
   const image = product.images[activeImage];
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
   const guide = SIZE_GUIDES[product.category];
 
-  const enquiryHref = (() => {
-    const subject = `Order enquiry: ${product.name}${size ? ` (${size})` : ''}`;
-    const body = `Hello PAKARAM,\n\nI would like to enquire about ${product.name}${size ? `, size ${size}` : ''}.\n\nThank you.`;
-    return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  })();
-
-  const handleEnquiry = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (!size) {
-      event.preventDefault();
-      setSizeError(true);
-    }
+  const placeOrder = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!cmsSupabase || !product.id) { setOrderMessage('This product is not connected to the live catalogue yet.'); return; }
+    if (!size && product.sizes.length > 1) { setSizeError(true); return; }
+    setOrderBusy(true); setOrderMessage('');
+    const { data, error } = await cmsSupabase.functions.invoke('store-checkout', {
+      body: { action: 'create-payment-order', productId: product.id, quantity: 1, size, customer, currency: 'INR' },
+    });
+    setOrderBusy(false);
+    if (error || data?.error) { setOrderMessage(data?.error || error?.message || 'Could not start checkout. Please try again.'); return; }
+    if (!data?.keyId || !data?.razorpayOrderId) { setOrderMessage('Checkout is being configured. Please try again later.'); return; }
+    const RazorpayCheckout = (window as any).Razorpay;
+    if (!RazorpayCheckout) { setOrderMessage('Secure checkout could not load. Refresh the page and try again.'); return; }
+    const checkout = new RazorpayCheckout({
+      key: data.keyId, amount: data.amount, currency: data.currency, name: 'THE OTHER PERSON',
+      description: product.name, order_id: data.razorpayOrderId, prefill: { name: customer.name, email: customer.email, contact: customer.phone },
+      theme: { color: '#d14f1f' },
+      handler: async (response: any) => {
+        const verified = await cmsSupabase!.functions.invoke('store-checkout', { body: { action: 'verify-payment', orderId: data.orderId, razorpayOrderId: response.razorpay_order_id, razorpayPaymentId: response.razorpay_payment_id, razorpaySignature: response.razorpay_signature } });
+        if (verified.error || verified.data?.error || !verified.data?.paid) setOrderMessage('We received the payment response but could not verify it yet. Please contact support with order ' + data.orderNumber + '.');
+        else setOrderMessage('Payment confirmed. Your order ' + data.orderNumber + ' is placed. We will email your order updates.');
+      },
+      modal: { ondismiss: () => setOrderMessage('Checkout closed. Your order has not been confirmed as paid.') },
+    });
+    checkout.open();
   };
 
   return (
@@ -129,17 +147,26 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
               )}
 
               <div className="mt-10 border-t border-ink/15 pt-8">
-                <a
-                  href={enquiryHref}
-                  onClick={handleEnquiry}
-                  className="btn-primary w-full sm:w-auto"
-                >
-                  <Mail aria-hidden="true" className="h-4 w-4" />
-                  Send order enquiry
-                </a>
-                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">
-                  Orders are not taken online yet. Your enquiry opens an email to our team, who will confirm availability and next steps.
-                </p>
+                <button type="button" onClick={() => { setOrderOpen(!orderOpen); setOrderMessage(""); }} className="btn-primary w-full sm:w-auto">Buy now</button>
+                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">Secure checkout with UPI, cards and supported payment methods.</p>
+                {orderOpen && <form onSubmit={placeOrder} className="mt-6 grid gap-4 border border-ink/15 p-5">
+                  <h2 className="font-serif text-2xl">Delivery details</h2>
+                  <label className="text-sm">Full name<input required value={customer.name} onChange={e => setCustomer({ ...customer, name: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                  <label className="text-sm">Email<input required type="email" value={customer.email} onChange={e => setCustomer({ ...customer, email: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                  <label className="text-sm">Phone<input required value={customer.phone} onChange={e => setCustomer({ ...customer, phone: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                  {product.productKind !== "digital" && <>
+                    <label className="text-sm">Address<input required value={customer.address1} onChange={e => setCustomer({ ...customer, address1: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <label className="text-sm">City<input required value={customer.city} onChange={e => setCustomer({ ...customer, city: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                      <label className="text-sm">State<input required value={customer.region} onChange={e => setCustomer({ ...customer, region: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                      <label className="text-sm">PIN code<input required value={customer.zip} onChange={e => setCustomer({ ...customer, zip: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                      <label className="text-sm">Country<input required value={customer.country} onChange={e => setCustomer({ ...customer, country: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
+                    </div>
+                  </>}
+                  <p className="text-sm font-semibold">Total: {formatINR(product.price)}</p>
+                  <button disabled={orderBusy} className="btn-primary w-full disabled:opacity-50">{orderBusy ? "Starting secure checkout…" : "Continue to payment"}</button>
+                </form>}
+                {orderMessage && <p role="status" className="mt-4 text-sm text-charcoal">{orderMessage}</p>}
               </div>
 
               <div className="mt-10 divide-y divide-ink/15 border-y border-ink/15">
