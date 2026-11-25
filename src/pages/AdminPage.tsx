@@ -1,22 +1,23 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Box, Check, ChevronRight, FileText, Home, LogOut, Mail, Plus, Save, Settings, ShieldCheck, Tags, Users, X } from 'lucide-react';
+import { ArrowLeft, BookOpen, Box, Check, ChevronRight, FileText, Home, LogOut, Mail, Plus, Save, Settings, ShieldCheck, ShoppingBag, Tags, Users, X } from 'lucide-react';
 import { cmsSupabase } from '@/lib/cmsSupabase';
 
-type Tab = 'overview' | 'stories' | 'submissions' | 'products' | 'categories' | 'authors' | 'homepage' | 'newsletter';
+type Tab = 'overview' | 'stories' | 'submissions' | 'products' | 'orders' | 'categories' | 'authors' | 'homepage' | 'newsletter';
 type Row = Record<string, any>;
 const NAV: { id: Tab; label: string; icon: typeof Home }[] = [
   { id: 'overview', label: 'Overview', icon: Home },
   { id: 'stories', label: 'Stories', icon: BookOpen },
   { id: 'submissions', label: 'Submissions', icon: FileText },
   { id: 'products', label: 'Products', icon: Box },
+  { id: 'orders', label: 'Orders', icon: ShoppingBag }, 
   { id: 'categories', label: 'Categories', icon: Tags },
   { id: 'authors', label: 'Authors', icon: Users },
   { id: 'homepage', label: 'Homepage', icon: Settings },
   { id: 'newsletter', label: 'Newsletter', icon: Mail },
 ];
 const emptyArticle = { title: '', slug: '', excerpt: '', dek: '', body: '', cover_image_url: '', image_alt: '', content_type: 'culture', section: 'stories', category_id: '', author_name: '', author_role: '', reading_time: 5, status: 'draft', featured: false };
-const emptyProduct = { name: '', slug: '', description: '', tagline: '', price: '', product_type: 'apparel', category: 'Tees', image_url: '', external_url: '', fabric: '', fit: '', sizes: 'S, M, L, XL', gallery: '', status: 'draft' };
+const emptyProduct = { name: '', slug: '', description: '', tagline: '', price: '', product_type: 'other', category: 'Digital', image_url: '', external_url: '', fabric: '', fit: '', sizes: 'Digital PDF', gallery: '', status: 'draft' };
 const emptyAuthor = { name: '', slug: '', role: '', bio: '', avatar_url: '', website_url: '', is_active: true };
 const slugify = (value: string) => value.toLowerCase().trim().normalize('NFKD').replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
 const splitLines = (value: string) => value.split('\n').map(v => v.trim()).filter(Boolean);
@@ -31,7 +32,7 @@ export function AdminPage() {
   const [loginError, setLoginError] = useState('');
   const [busy, setBusy] = useState(false);
   const [tab, setTab] = useState<Tab>('overview');
-  const [data, setData] = useState<Record<string, Row[]>>({ articles: [], contributions: [], products: [], categories: [], authors: [], newsletter_subscribers: [] });
+  const [data, setData] = useState<Record<string, Row[]>>({ articles: [], contributions: [], products: [], orders: [], categories: [], authors: [], newsletter_subscribers: [] });
   const [settings, setSettings] = useState<Row>({});
   const [editor, setEditor] = useState<{ kind: 'article' | 'product' | 'category' | 'author'; row: Row } | null>(null);
   const [notice, setNotice] = useState('');
@@ -40,7 +41,7 @@ export function AdminPage() {
   const load = async () => {
     const client = cmsSupabase;
     if (!client) return;
-    const tables = ['articles', 'contributions', 'products', 'categories', 'authors', 'newsletter_subscribers'];
+    const tables = ['articles', 'contributions', 'products', 'store_orders', 'categories', 'authors', 'newsletter_subscribers'];
     const results = await Promise.all(tables.map(name => client.from(name).select('*').order('created_at', { ascending: false }).limit(200)));
     const next: Record<string, Row[]> = {};
     results.forEach((result, i) => { next[tables[i]] = result.error ? [] : (result.data ?? []); });
@@ -57,7 +58,7 @@ export function AdminPage() {
       await load();
     } else {
       await cmsSupabase.auth.signOut();
-      setLoginError('This account is not authorised for PAKARAM Studio.');
+      setLoginError('This account is not authorised for THE OTHER PERSON Studio.');
     }
     setReady(true);
   };
@@ -155,6 +156,38 @@ export function AdminPage() {
     setBusy(false);
   };
 
+  const verifyStoreOrder = async (row: Row) => {
+    if (!cmsSupabase) return;
+    const { error } = await cmsSupabase.from('store_orders')
+      .update({ payment_status: 'verified', fulfilment_status: 'ready_to_deliver', updated_at: new Date().toISOString() })
+      .eq('id', row.id);
+    setNotice(error ? error.message : `Payment verified for ${row.order_number}.`);
+    await load();
+  };
+
+  const deliverStoreOrder = async (row: Row) => {
+    if (!cmsSupabase) return;
+    const deliveryUrl = (document.getElementById(`delivery-${row.id}`) as HTMLInputElement | null)?.value.trim();
+    if (!deliveryUrl || !/^https:\/\//i.test(deliveryUrl)) {
+      setNotice('Paste a secure HTTPS delivery link before marking this order delivered.');
+      return;
+    }
+    const { error } = await cmsSupabase.from('store_orders')
+      .update({ delivery_file_url: deliveryUrl, fulfilment_status: 'delivered', payment_status: 'verified', updated_at: new Date().toISOString() })
+      .eq('id', row.id);
+    setNotice(error ? error.message : `Delivery marked complete for ${row.order_number}. Send the link to the customer by email.`);
+    await load();
+  };
+
+  const rejectStoreOrder = async (row: Row) => {
+    if (!cmsSupabase || !window.confirm(`Reject payment reference for ${row.order_number}?`)) return;
+    const { error } = await cmsSupabase.from('store_orders')
+      .update({ payment_status: 'rejected', fulfilment_status: 'cancelled', updated_at: new Date().toISOString() })
+      .eq('id', row.id);
+    setNotice(error ? error.message : `Order ${row.order_number} marked rejected.`);
+    await load();
+  };
+
   const saveSettings = async () => {
     if (!cmsSupabase) return;
     setBusy(true);
@@ -201,7 +234,7 @@ export function AdminPage() {
         <aside className="border-b border-white/10 p-4 md:min-h-[calc(100vh-73px)] md:border-b-0 md:border-r md:p-5">
           <p className="px-3 pb-3 text-[10px] font-semibold uppercase tracking-[.2em] text-white/30">Workspace</p>
           <nav className="grid grid-cols-2 gap-1 md:grid-cols-1">{NAV.map(item=>{const Icon=item.icon;return <button key={item.id} onClick={()=>{setTab(item.id);setEditor(null);setNotice('');}} className={`flex items-center gap-3 px-3 py-3 text-left text-sm transition ${tab===item.id?'bg-[#d14f1f] text-white':'text-white/60 hover:bg-white/5 hover:text-white'}`}><Icon size={16}/>{item.label}{item.id==='submissions'&&counts.pending>0&&<span className="ml-auto rounded-full bg-white/15 px-2 py-0.5 text-[10px]">{counts.pending}</span>}</button>})}</nav>
-          <div className="mt-8 border-t border-white/10 pt-5"><div className="flex items-center gap-2 text-xs text-emerald-300"><ShieldCheck size={15}/> Private admin access</div><p className="mt-2 text-[11px] leading-relaxed text-white/35">Only accounts listed in the PAKARAM admin database can enter this workspace.</p></div>
+          <div className="mt-8 border-t border-white/10 pt-5"><div className="flex items-center gap-2 text-xs text-emerald-300"><ShieldCheck size={15}/> Private admin access</div><p className="mt-2 text-[11px] leading-relaxed text-white/35">Only accounts listed in the THE OTHER PERSON admin database can enter this workspace.</p></div>
         </aside>
         <main className="min-w-0 p-5 md:p-8 lg:p-10">
           <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[.24em] text-[#d14f1f]">Editorial control room</p><h1 className="mt-2 text-4xl font-black tracking-tight md:text-5xl">{title}</h1><p className="mt-2 text-sm text-white/45">Manage the publication, community and PAKARAM label.</p></div>
@@ -231,7 +264,7 @@ export function AdminPage() {
               {field('Product name','name',editor.row.name,v=>setEditor({...editor,row:{...editor.row,name:v,slug:editor.row.id?editor.row.slug:slugify(v)}}))}
               {field('Slug','slug',editor.row.slug,v=>setEditor({...editor,row:{...editor.row,slug:v}}))}
               {field('Price (INR)','price',editor.row.price,v=>setEditor({...editor,row:{...editor.row,price:v}}),{type:'number'})}
-              <label className="text-sm text-white/70">Category<select value={editor.row.category} onChange={e=>setEditor({...editor,row:{...editor.row,category:e.target.value}})} className="mt-2 w-full bg-black border border-white/15 p-3 text-white"><option value="Tees">Tees</option><option value="Totes">Totes</option></select></label>
+              <label className="text-sm text-white/70">Category<select value={editor.row.category} onChange={e=>setEditor({...editor,row:{...editor.row,category:e.target.value}})} className="mt-2 w-full bg-black border border-white/15 p-3 text-white"><option value="Tees">Tees</option><option value="Totes">Totes</option><option value="Digital">Digital</option></select></label>
               {field('Tagline','tagline',editor.row.tagline,v=>setEditor({...editor,row:{...editor.row,tagline:v}}))}
               {field('Main image URL','image_url',editor.row.image_url,v=>setEditor({...editor,row:{...editor.row,image_url:v}}))}<label className="block text-sm text-white/70">Or upload product image<input type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={e=>{const file=e.target.files?.[0];if(file)void uploadImage(file,url=>setEditor(current=>current?{...current,row:{...current.row,image_url:url,gallery:url}}:current));}} className="mt-2 block w-full text-xs text-white/60"/></label>
               {field('External product / checkout URL','external_url',editor.row.external_url,v=>setEditor({...editor,row:{...editor.row,external_url:v}}))}
@@ -251,11 +284,25 @@ export function AdminPage() {
           {tab==='stories'&&<div className="mt-8 space-y-3">{data.articles.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-4 border border-white/10 bg-[#151515] p-5"><div className="min-w-0"><p className="font-semibold">{row.title}</p><p className="mt-1 text-xs text-white/40">{row.section} · {row.status} · {row.featured?'Featured · ':''}{prettyDate(row.updated_at||row.created_at)}</p></div><div className="flex gap-2"><button onClick={()=>openEditor('article',row)} className="border border-white/20 px-4 py-2 text-xs">Edit</button><button onClick={()=>void removeRow('article',row)} className="border border-red-400/30 px-4 py-2 text-xs text-red-300">Delete</button></div></div>)}{!data.articles.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No stories yet. Create your first story.</p>}</div>}
           {tab==='submissions'&&<div className="mt-8 space-y-4">{data.contributions.map(row=><article key={row.id} className="border border-white/10 bg-[#151515] p-5 md:p-6"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-lg font-semibold">{row.proposed_title}</p><p className="mt-1 text-xs text-white/45">{row.contributor_name} · {row.contributor_email} · {row.category||'Uncategorised'} · {prettyDate(row.created_at)}</p></div><span className="bg-white/10 px-3 py-1 text-xs uppercase tracking-wider">{row.status}</span></div><p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-white/70">{row.content}</p>{row.author_bio&&<p className="mt-3 text-xs text-white/40">Bio: {row.author_bio}</p>}{row.reference_link&&<a className="mt-3 inline-block text-xs text-[#f18b63] underline" href={row.reference_link} target="_blank" rel="noreferrer">Reference / images</a>}<div className="mt-5 grid gap-3 md:grid-cols-[1fr_auto]"><textarea defaultValue={row.admin_notes||''} id={`note-${row.id}`} placeholder="Internal editorial notes…" rows={2} className="w-full bg-black/40 border border-white/15 p-3 text-sm"/><div className="flex flex-wrap gap-2"><button onClick={()=>void updateSubmission(row,{status:'in_review',admin_notes:(document.getElementById(`note-${row.id}`) as HTMLTextAreaElement)?.value||''})} className="border border-white/20 px-3 py-2 text-xs">In review</button><button onClick={()=>void createDraftFromSubmission(row)} className="bg-[#d14f1f] px-3 py-2 text-xs font-bold">Create draft</button><button onClick={()=>void updateSubmission(row,{status:'rejected',admin_notes:(document.getElementById(`note-${row.id}`) as HTMLTextAreaElement)?.value||''})} className="border border-red-400/30 px-3 py-2 text-xs text-red-300">Reject</button></div></div></article>)}{!data.contributions.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No reader submissions yet.</p>}</div>}
           {tab==='products'&&<div className="mt-8 grid gap-4 lg:grid-cols-2">{data.products.map(row=><div key={row.id} className="flex gap-4 border border-white/10 bg-[#151515] p-4"><div className="h-28 w-24 shrink-0 bg-black">{row.image_url&&<img src={row.image_url} alt="" className="h-full w-full object-cover"/>}</div><div className="min-w-0 flex-1"><p className="font-semibold">{row.name}</p><p className="mt-1 text-sm text-white/50">₹{row.price??'—'} · {row.status}</p><p className="mt-1 text-xs text-white/35">{row.category||row.product_type}</p><div className="mt-4 flex gap-2"><button onClick={()=>openEditor('product',row)} className="border border-white/20 px-3 py-2 text-xs">Edit</button><button onClick={()=>void removeRow('product',row)} className="border border-red-400/30 px-3 py-2 text-xs text-red-300">Delete</button></div></div></div>)}{!data.products.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No products yet.</p>}</div>}
+          {tab==='orders'&&<div className="mt-8 space-y-4">
+            <p className="max-w-3xl text-sm leading-relaxed text-white/50">Review the UPI reference against your bank account before verifying a payment. After verification, paste the private PDF delivery link and mark the order delivered. Do not mark a payment verified from a screenshot alone.</p>
+            {data.orders.map(row=><article key={row.id} className="border border-white/10 bg-[#151515] p-5 md:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div><p className="text-lg font-bold">{row.order_number}</p><p className="mt-1 text-sm text-white/65">{row.product_name} · ₹{row.amount}</p><p className="mt-1 text-xs text-white/40">{row.customer_name} · {row.customer_email} · {row.customer_phone||'No phone'}</p><p className="mt-2 text-xs text-white/35">{prettyDate(row.created_at)}</p></div>
+                <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-wider"><span className="bg-white/10 px-3 py-2">{row.payment_status}</span><span className="bg-white/10 px-3 py-2">{row.fulfilment_status}</span></div>
+              </div>
+              <p className="mt-4 border-t border-white/10 pt-4 text-sm">UPI reference: <strong className="break-all">{row.payment_reference||'Not submitted yet'}</strong></p>
+              {row.payment_status==='pending'&&<div className="mt-4 flex flex-wrap gap-2"><button onClick={()=>void verifyStoreOrder(row)} className="bg-emerald-700 px-4 py-2 text-xs font-bold uppercase tracking-wider">Verify payment</button><button onClick={()=>void rejectStoreOrder(row)} className="border border-red-400/30 px-4 py-2 text-xs text-red-300">Reject reference</button></div>}
+              {row.payment_status==='verified'&&row.fulfilment_status!=='delivered'&&<div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]"><input id={`delivery-${row.id}`} defaultValue={row.delivery_file_url||''} placeholder="Private PDF delivery link (HTTPS)" className="min-w-0 border border-white/15 bg-black/40 p-3 text-sm text-white"/><button onClick={()=>void deliverStoreOrder(row)} className="bg-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-wider">Mark delivered</button></div>}
+              {row.fulfilment_status==='delivered'&&<p className="mt-4 text-xs text-emerald-300">Delivered · <a className="underline" href={row.delivery_file_url} target="_blank" rel="noreferrer">Open delivery file</a></p>}
+            </article>)}
+            {!data.orders.length&&<p className="border border-white/10 p-8 text-sm text-white/40">No orders yet. New customer orders will appear here.</p>}
+          </div>}
           {tab==='categories'&&<div className="mt-8 space-y-3">{data.categories.map(row=><div key={row.id} className="flex items-center justify-between border border-white/10 bg-[#151515] p-4"><div><p className="font-semibold">{row.name}</p><p className="text-xs text-white/40">{row.slug} · {row.is_active?'Active':'Inactive'}</p></div><div className="flex gap-2"><button onClick={()=>openEditor('category',row)} className="border border-white/20 px-4 py-2 text-xs">Edit</button><button onClick={()=>void removeRow('category',row)} className="border border-red-400/30 px-4 py-2 text-xs text-red-300">Delete</button></div></div>)}</div>}
           {tab==='authors'&&<div className="mt-8 grid gap-3 md:grid-cols-2">{data.authors.map(row=><div key={row.id} className="flex items-center gap-4 border border-white/10 bg-[#151515] p-4">{row.avatar_url?<img src={row.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover"/>:<div className="grid h-14 w-14 place-items-center rounded-full bg-white/10">{row.name?.slice(0,1)}</div>}<div className="min-w-0 flex-1"><p className="font-semibold">{row.name}</p><p className="text-xs text-white/40">{row.role}</p></div><button onClick={()=>openEditor('author',row)} className="border border-white/20 px-3 py-2 text-xs">Edit</button></div>)}</div>}
           {tab==='homepage'&&<div className="mt-8 max-w-3xl border border-white/10 bg-[#151515] p-6"><p className="mb-6 text-sm text-white/45">Control the editorial hero and choose the story highlighted on the homepage.</p><div className="space-y-5">{field('Hero eyebrow','hero_eyebrow',settings.hero_eyebrow,v=>setSettings({...settings,hero_eyebrow:v}))}{field('Hero title','hero_title',settings.hero_title,v=>setSettings({...settings,hero_title:v}))}{field('Hero description','hero_description',settings.hero_description,v=>setSettings({...settings,hero_description:v}),{multiline:true})}<label className="block text-sm text-white/70">Featured story<select value={settings.featured_article_id||''} onChange={e=>setSettings({...settings,featured_article_id:e.target.value||null})} className="mt-2 w-full border border-white/15 bg-black p-3 text-white"><option value="">Use default featured story</option>{data.articles.filter(a=>a.status==='published').map(a=><option key={a.id} value={a.id}>{a.title}</option>)}</select></label><button onClick={()=>void saveSettings()} disabled={busy} className="inline-flex items-center gap-2 bg-[#d14f1f] px-5 py-3 text-xs font-bold uppercase tracking-widest"><Save size={15}/> Save homepage</button></div></div>}
           {tab==='newsletter'&&<div className="mt-8 overflow-x-auto border border-white/10"><table className="w-full text-left text-sm"><thead className="bg-white/5 text-xs uppercase tracking-wider text-white/40"><tr><th className="p-4">Email</th><th className="p-4">Subscribed</th></tr></thead><tbody>{data.newsletter_subscribers.map(row=><tr key={row.id} className="border-t border-white/10"><td className="p-4">{row.email}</td><td className="p-4 text-white/45">{prettyDate(row.created_at)}</td></tr>)}</tbody></table>{!data.newsletter_subscribers.length&&<p className="p-6 text-sm text-white/40">No subscribers found in this CMS database yet.</p>}</div>}
-          <footer className="mt-14 flex items-center justify-between border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-white/25"><span>PAKARAM · Private editorial workspace</span><span>Another Way of Seeing Things</span></footer>
+          <footer className="mt-14 flex items-center justify-between border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-white/25"><span>THE OTHER PERSON · Private store workspace</span><span>Another Way of Seeing Things</span></footer>
         </main>
       </div>
     </div>
