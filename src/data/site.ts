@@ -1,5 +1,5 @@
 export const SITE_NAME = 'THE OTHER PERSON';
-export const TAGLINE = 'You. Me. And the other person.';
+export const TAGLINE = 'Who is this other person anyway?';
 export const CONTACT_EMAIL = '';
 
 export const NAV_LINKS = [
