@@ -12,7 +12,7 @@ export const CULTURE_CATEGORIES: CultureCategory[] = [
   {
     slug: 'cinema',
     label: 'Cinema',
-    description: 'Films, filmmakers and the stories that keep audiences in their seats.',
+    description: 'The films, scenes, stars and stories that become part of our everyday conversations.',
     categories: ['Cinema'],
     image: {
       src: 'https://images.pexels.com/photos/3692641/pexels-photo-3692641.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
@@ -22,7 +22,7 @@ export const CULTURE_CATEGORIES: CultureCategory[] = [
   {
     slug: 'football',
     label: 'Football',
-    description: 'Terraces, tactics and the people who give the game its meaning.',
+    description: 'The loyalties, rivalries, rituals and identities that make sport personal.',
     categories: ['Football'],
     image: {
       src: 'https://images.pexels.com/photos/4038906/pexels-photo-4038906.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
@@ -32,7 +32,7 @@ export const CULTURE_CATEGORIES: CultureCategory[] = [
   {
     slug: 'world-society',
     label: 'World & Society',
-    description: 'Cities, communities and the questions shaping how we live together.',
+    description: 'Family rules, social codes, public behaviour and the invisible expectations shaping everyday life.',
     categories: ['Society', 'World Affairs'],
     image: {
       src: 'https://images.pexels.com/photos/17928231/pexels-photo-17928231.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
@@ -42,7 +42,7 @@ export const CULTURE_CATEGORIES: CultureCategory[] = [
   {
     slug: 'fashion-design',
     label: 'Fashion & Design',
-    description: 'Visual culture, graphic experiments and the way we dress our ideas.',
+    description: 'Clothes, design, language and the many ways we choose to express who we are.',
     categories: ['Fashion', 'Design'],
     image: {
       src: 'https://images.pexels.com/photos/31528815/pexels-photo-31528815.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
