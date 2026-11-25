@@ -27,8 +27,8 @@ const GRAPHIC_CONCEPTS = [
 
 export function FashionPage() {
   useDocumentMeta(
-    'Fashion and Design | PAKARAM',
-    'Original graphic concepts, pattern experiments, typography prints and fashion stories from PAKARAM.',
+    'Objects & Expression | THE OTHER PERSON',
+    'Wearable ideas, graphic experiments and objects from THE OTHER PERSON.',
   );
 
   const articles = usePublishedArticles();
@@ -42,7 +42,7 @@ export function FashionPage() {
       <PageHero
         eyebrow="Fashion and design"
         title="Fashion"
-        intro="A fashion label that thinks like an editor. Graphic ideas, pattern studies and the stories behind every print."
+        intro="A creative label where observations become graphics, words become wearable ideas and everyday culture becomes something you can take with you."
       />
 
       <section className="bg-ink text-cream" aria-labelledby="typography-heading">
@@ -56,7 +56,7 @@ export function FashionPage() {
 
       <section className="bg-cream" aria-labelledby="concepts-heading">
         <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-          <SectionHeading eyebrow="Original graphic concepts" title="Concepts" as="h2" />
+          <SectionHeading eyebrow="Ideas turned into graphics" title="Concepts" as="h2" />
           <ol className="mt-14 grid gap-12 md:grid-cols-3">
             {GRAPHIC_CONCEPTS.map((concept, index) => (
               <li key={concept.title} className="flex flex-col gap-4 border-t border-ink pt-6">
@@ -85,7 +85,7 @@ export function FashionPage() {
 
       <section className="bg-cream" aria-labelledby="fashion-stories-heading">
         <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-          <SectionHeading eyebrow="Fashion stories" title="Read the thread" as="h2" />
+          <SectionHeading eyebrow="Style, identity & expression" title="Read the thread" as="h2" />
           <div className="mt-14 grid gap-x-8 gap-y-12 md:grid-cols-3">
             {fashionStories.map((article) => (
               <ArticleCard key={article.slug} article={article} />
@@ -98,7 +98,7 @@ export function FashionPage() {
         <div className="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
           <SectionHeading
             eyebrow="Collection preview"
-            title="The first drop"
+            title="Made to make a point"
             as="h2"
             action={
               <Link to="/store" className="link-underline text-ink hover:text-orange-deep">
