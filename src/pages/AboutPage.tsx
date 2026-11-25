@@ -21,7 +21,7 @@ const PRINCIPLES = [
 export function AboutPage() {
   useDocumentMeta(
     'About | THE OTHER PERSON',
-    'An Indian culture and ideas platform exploring social expectations, identity, relationships, work and everyday life. Meet THE OTHER PERSON.',
+    'Who is this other person anyway? An Indian editorial and creative platform about the invisible audience in our everyday lives.',
   );
 
   return (
@@ -32,14 +32,14 @@ export function AboutPage() {
         <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-20 md:px-8 md:py-28 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-6">
             <p className="font-serif text-3xl leading-snug md:text-5xl">
-              There are always three people. You. Me. And the other person.
+              Who is this other person anyway?
             </p>
           </div>
           <div className="space-y-6 font-sans text-lg leading-[1.75] text-charcoal lg:col-span-5 lg:col-start-8">
             <p>
-              The other person is the one whose opinion somehow matters, even when they have nothing to do with our lives. They show up when we choose what to wear, what to study, where to work, who to love, when to marry and what to post. Sometimes they are family, neighbours, friends or complete strangers. Sometimes they are simply a voice in our heads asking, “Log kya kahenge?” THE OTHER PERSON is an Indian culture and ideas platform exploring that space between who we are and who we are expected to be. Through stories, opinions, conversations, design and products, we question the rules, laugh at the contradictions and make room for different perspectives.
+              The other person is not one person. They are the relative with a question, the neighbour with an update, the colleague with an opinion, the family group chat and the stranger whose judgement we imagine before they have said a word. They appear when we choose what to wear, what to study, where to work, who to love, when to marry or what to post. Sometimes the voice is familiar. Sometimes it is a vague “log kya kahenge?” hanging in the air. THE OTHER PERSON is an Indian editorial and creative platform exploring the invisible audience that shapes our choices. Through stories, opinions, cultural observations and design, we look at who this person is, why their opinion carries weight and what happens when we stop treating it as the final word.
             </p>
-            <p className="font-serif text-2xl italic text-ink">The opinions, expectations, contradictions, conversations, culture and everyday absurdities that shape the way we live.</p>
+            <p className="font-serif text-2xl italic text-ink">A closer look at the audience we carry around — and the lives we build while imagining what they might say.</p>
           </div>
         </div>
       </section>
