@@ -6,9 +6,9 @@ export function StoriesPage() {
       section="stories"
       eyebrow="Stories"
       title="Stories"
-      intro="Long reads on cinema, football, fashion and the ideas shaping how we live."
-      metaTitle="Stories | PAKARAM"
-      metaDescription="Long-form stories on Malayalam cinema, Kerala football, regional streetwear and independent culture."
+      intro="Stories about the things we inherit, the expectations we carry and the culture we create."
+      metaTitle="Stories | THE OTHER PERSON"
+      metaDescription="Essays and cultural stories about identity, society, relationships, family, work and everyday life."
     />
   );
 }
