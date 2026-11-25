@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: 2px solid #d14f1f;
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: #d14f1f;
+    color: #ffffff;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-sans text-xs font-semibold uppercase tracking-label text-orange-deep;
+  }
+
+  .display-heading {
+    @apply font-display uppercase leading-[0.95] tracking-tight;
+  }
+
+  .rule {
+    @apply border-t border-ink/15;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-orange-deep px-6 py-3.5 font-sans text-sm font-semibold uppercase tracking-label text-white transition-colors duration-300 hover:bg-ink;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 border border-current px-6 py-3.5 font-sans text-sm font-semibold uppercase tracking-label transition-colors duration-300 hover:border-orange-deep hover:bg-orange-deep hover:text-white;
+  }
+
+  .link-underline {
+    @apply relative inline-flex items-center gap-2 font-sans text-sm font-semibold uppercase tracking-label after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-100 after:bg-current after:transition-transform after:duration-500 hover:after:scale-x-0;
+  }
+
+  .img-mono {
+    @apply grayscale transition duration-700 ease-out;
+  }
+}
