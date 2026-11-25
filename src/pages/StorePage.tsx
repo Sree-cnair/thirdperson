@@ -32,7 +32,7 @@ export function StorePage() {
       <PageHero
         eyebrow="Store"
         title="The Store"
-        intro="A first catalogue of tees and totes, designed as an extension of the magazine. Secure checkout is being prepared. Product availability and order details are shown on each product page."
+        intro="A preview of tees and totes designed as an extension of the editorial world. Online ordering is not open yet; this catalogue is here to introduce the ideas and products."
       />
 
       <section className="bg-cream">
