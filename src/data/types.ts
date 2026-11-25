@@ -1,6 +1,6 @@
 export type ArticleSection = 'stories' | 'opinion' | 'culture' | 'fashion';
 
-export type ArticleCategory = 'Cinema' | 'Football' | 'Fashion' | 'Design' | 'Society' | 'World Affairs' | 'Opinion' | 'Other';
+export type ArticleCategory = 'Cinema' | 'Football' | 'Fashion' | 'Design' | 'Society' | 'World Affairs' | 'Opinion' | 'Other' | 'Relationships' | 'Identity' | 'Everyday life' | 'Work & ambition' | 'Digital culture' | 'Objects & expression';
 
 export interface Author {
   name: string;
