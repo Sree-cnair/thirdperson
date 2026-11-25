@@ -14,14 +14,14 @@ export function CommunityBanner() {
         <div className="lg:col-span-7">
           <p className="eyebrow">Community</p>
           <h2 id="community-heading" className="display-heading mt-4 text-5xl md:text-7xl lg:text-8xl">
-            There is room for <span className="text-orange-deep">another point of view.</span>
+            So, who is <span className="text-orange-deep">your other person?</span>
           </h2>
           <p className="mt-8 max-w-xl text-base leading-relaxed text-charcoal md:text-lg">
-            THE OTHER PERSON grows through the people who question, challenge and add to the conversation. Have a story, an opinion or an idea worth putting out there? Bring it to us.
+            We want to hear about the comments you remember, the expectations you question and the moments that make you laugh. Tell us who this person is in your world.
           </p>
           <div className="mt-10">
             <Link to="/contribute" className="btn-primary">
-              Bring your perspective
+              Tell us your story
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </div>
