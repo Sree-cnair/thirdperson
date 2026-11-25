@@ -1,5 +1,3 @@
-import { Instagram, Twitter, Youtube } from 'lucide-react';
-
 export const SITE_NAME = 'THE OTHER PERSON';
 export const TAGLINE = 'You. Me. And the other person.';
 export const CONTACT_EMAIL = '';
@@ -13,11 +11,7 @@ export const NAV_LINKS = [
   { label: 'Contribute', to: '/contribute' },
 ] as const;
 
-export const SOCIAL_LINKS = [
-  { label: 'Instagram', href: '#', icon: Instagram },
-  { label: 'X', href: '#', icon: Twitter },
-  { label: 'YouTube', href: '#', icon: Youtube },
-] as const;
+export const SOCIAL_LINKS = [] as const;
 
 export const FOOTER_LINKS = [
   { label: 'About', to: '/about' },
