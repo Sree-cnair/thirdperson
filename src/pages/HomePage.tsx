@@ -8,8 +8,8 @@ import { NewsletterSection } from '@/components/home/NewsletterSection';
 
 export function HomePage() {
   useDocumentMeta(
-    'OTHER PEOPLE | Another Way of Seeing Things',
-    'Stories, opinions and ideas on cinema, football, fashion, society and design from Kerala, India and beyond.',
+    'THE OTHER PERSON | You. Me. And the other person.',
+    'An Indian culture and ideas platform exploring log kya kahenge, social expectations, identity, everyday absurdities and the things we make.',
   );
 
   return (
