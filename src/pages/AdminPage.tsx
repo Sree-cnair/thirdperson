@@ -31,6 +31,7 @@ export function AdminPage() {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [recoveryMode, setRecoveryMode] = useState(false);
+  const [inviteSetupMode, setInviteSetupMode] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [resetNotice, setResetNotice] = useState('');
@@ -77,14 +78,18 @@ export function AdminPage() {
     if (!cmsSupabase) { setReady(true); return; }
     cmsSupabase.auth.getSession().then(({ data: { session } }) => {
       if (!active) return;
-      if (session?.user) void verifyUser(session.user.id, session.user.email || '');
-      else setReady(true);
+      if (session?.user) {
+        if (session.user.invited_at && !session.user.user_metadata?.password_setup_complete) setInviteSetupMode(true);
+        void verifyUser(session.user.id, session.user.email || '');
+      } else setReady(true);
     });
     const { data: listener } = cmsSupabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
       if (!active) return;
-      if (session?.user) void verifyUser(session.user.id, session.user.email || '');
-      else setAdmin(null);
+      if (session?.user) {
+        if (session.user.invited_at && !session.user.user_metadata?.password_setup_complete) setInviteSetupMode(true);
+        void verifyUser(session.user.id, session.user.email || '');
+      } else setAdmin(null);
     });
     return () => { active = false; listener.subscription.unsubscribe(); };
   }, []);
@@ -115,9 +120,9 @@ export function AdminPage() {
     if (!cmsSupabase) return;
     if (newPassword.length < 8) { setResetNotice('Use a password with at least 8 characters.'); return; }
     setBusy(true); setResetNotice('');
-    const { error } = await cmsSupabase.auth.updateUser({ password: newPassword });
+    const { error } = await cmsSupabase.auth.updateUser({ password: newPassword, data: { password_setup_complete: true } });
     if (error) setResetNotice(error.message);
-    else { setRecoveryMode(false); setNewPassword(''); setResetNotice('Password updated. You can now sign in with your new password.'); await cmsSupabase.auth.signOut(); }
+    else { setRecoveryMode(false); setInviteSetupMode(false); setNewPassword(''); setResetNotice('Password updated. You can now sign in with your new password.'); await cmsSupabase.auth.signOut(); }
     setBusy(false);
   };
 
@@ -284,11 +289,12 @@ export function AdminPage() {
 
   if (!ready) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] grid place-items-center">Loading THE OTHER PERSON Studio…</div>;
   if (!configured) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] p-8 grid place-items-center"><div className="max-w-lg"><p className="text-[#d14f1f] text-xs tracking-[.2em] uppercase">THE OTHER PERSON Studio</p><h1 className="mt-3 text-4xl font-bold">Connection needed</h1><p className="mt-4 text-white/70">Add VITE_CMS_SUPABASE_URL and VITE_CMS_SUPABASE_PUBLISHABLE_KEY in the Render environment variables, then reload the site.</p></div></div>;
-  if (recoveryMode) return (
+  if (recoveryMode || inviteSetupMode) return (
     <main className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] flex items-center justify-center px-5 py-12">
       <form onSubmit={saveNewPassword} className="w-full max-w-md border border-white/15 bg-[#151515] p-8 md:p-10">
         <p className="text-[#d14f1f] text-xs font-semibold uppercase tracking-[.22em]">THE OTHER PERSON Studio</p>
-        <h1 className="mt-3 text-3xl font-black">Set a new password</h1>
+        <h1 className="mt-3 text-3xl font-black">{inviteSetupMode ? 'Create your admin password' : 'Set a new password'}</h1>
+        {inviteSetupMode && <p className="mt-3 text-sm text-white/60">Welcome to THE OTHER PERSON Studio. Create a password to finish setting up your admin account.</p>}
         <label className="block mt-8 text-sm">New password<input required minLength={8} type="password" autoComplete="new-password" value={newPassword} onChange={e=>setNewPassword(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
         {resetNotice && <p role="status" className="mt-4 text-sm text-[#ffb69f]">{resetNotice}</p>}
         <button disabled={busy} className="mt-7 w-full bg-[#d14f1f] px-5 py-4 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50">{busy ? 'Updating…' : 'Update password'}</button>
