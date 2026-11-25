@@ -12,7 +12,7 @@ const STEPS = [
 export function ContributePage() {
   useDocumentMeta(
     'Contribute | THE OTHER PERSON',
-    'Share an essay, opinion, observation or creative work with THE OTHER PERSON. Curious voices and fresh perspectives are welcome.',
+    'Tell us who the other person is in your world. Share an essay, opinion, observation or creative work about the expectations, conversations and everyday absurdities that shape how we live.',
   );
 
   return (
@@ -20,7 +20,7 @@ export function ContributePage() {
       <PageHero
         eyebrow="Contribute"
         title="Write for us"
-        intro="We are interested in the things people notice, question, laugh about and rarely say out loud. Bring us a personal essay, an uncomfortable question, a cultural observation, an opinion you can stand behind or a creative idea."
+        intro="Who is the other person in your life? A relative, a neighbour, an online audience, a voice you have internalised? Bring us a personal essay, a sharp observation, an opinion, a cultural story or a creative idea that opens up that question."
       />
 
       <section className="bg-cream">
