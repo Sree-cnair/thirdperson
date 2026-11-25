@@ -10,43 +10,43 @@ export interface CultureCategory {
 
 export const CULTURE_CATEGORIES: CultureCategory[] = [
   {
-    slug: 'cinema',
-    label: 'Cinema',
-    description: 'The films, scenes, stars and stories that become part of our everyday conversations.',
-    categories: ['Cinema'],
-    image: {
-      src: 'https://images.pexels.com/photos/3692641/pexels-photo-3692641.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-      alt: 'A man filming with a vintage camera in a black and white setting',
-    },
-  },
-  {
-    slug: 'football',
-    label: 'Football',
-    description: 'The loyalties, rivalries, rituals and identities that make sport personal.',
-    categories: ['Football'],
-    image: {
-      src: 'https://images.pexels.com/photos/4038906/pexels-photo-4038906.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-      alt: 'Black and white image of a crowd watching a match from the stadium',
-    },
-  },
-  {
-    slug: 'world-society',
-    label: 'World & Society',
-    description: 'Family rules, social codes, public behaviour and the invisible expectations shaping everyday life.',
-    categories: ['Society', 'World Affairs'],
+    slug: 'family-society',
+    label: 'Family & Society',
+    description: 'The rules we inherit, the roles we are handed and the expectations that follow us into adulthood.',
+    categories: ['Society', 'Relationships', 'Work & ambition'],
     image: {
       src: 'https://images.pexels.com/photos/17928231/pexels-photo-17928231.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
       alt: 'A traditional houseboat cruising through the Kerala backwaters',
     },
   },
   {
-    slug: 'fashion-design',
-    label: 'Fashion & Design',
-    description: 'Clothes, design, language and the many ways we choose to express who we are.',
-    categories: ['Fashion', 'Design'],
+    slug: 'identity-expression',
+    label: 'Identity & Expression',
+    description: 'Clothes, choices, language and the many ways we decide to show up in the world.',
+    categories: ['Identity', 'Objects & expression'],
     image: {
       src: 'https://images.pexels.com/photos/31528815/pexels-photo-31528815.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
-      alt: 'Artistic black and white studio portrait of a man',
+      alt: 'Artistic black and white studio portrait',
+    },
+  },
+  {
+    slug: 'digital-life',
+    label: 'Digital Life',
+    description: 'Group chats, forwarded messages, online performance and the social lives we lead through screens.',
+    categories: ['Digital culture'],
+    image: {
+      src: 'https://images.pexels.com/photos/18089547/pexels-photo-18089547.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+      alt: 'A narrow city alley with people walking in black and white',
+    },
+  },
+  {
+    slug: 'everyday-absurdities',
+    label: 'Everyday Absurdities',
+    description: 'Small encounters, familiar habits and the funny contradictions hiding in ordinary days.',
+    categories: ['Everyday life'],
+    image: {
+      src: 'https://images.pexels.com/photos/3692641/pexels-photo-3692641.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+      alt: 'A man filming with a vintage camera in a black and white setting',
     },
   },
 ];
