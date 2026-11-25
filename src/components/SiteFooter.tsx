@@ -15,7 +15,7 @@ export function SiteFooter() {
           </Link>
           <p className="mt-6 max-w-xs font-serif text-2xl italic leading-snug text-cream">{TAGLINE}</p>
           <p className="mt-4 font-sans text-xs uppercase tracking-label text-cream/70">
-            Culture / Fashion / Opinion / Community
+            Stories / Ideas / Culture / Everyday life
           </p>
         </div>
 
@@ -52,7 +52,7 @@ export function SiteFooter() {
               </a>
             </div>
           )}
-          <div>
+          {SOCIAL_LINKS.length > 0 && <div>
             <h2 className="font-sans text-xs font-semibold uppercase tracking-label text-lemon">Follow</h2>
             <ul className="mt-4 flex items-center gap-3">
               {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
@@ -67,7 +67,7 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div>}
         </div>
       </div>
 
