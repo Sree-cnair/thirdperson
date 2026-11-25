@@ -1,6 +1,6 @@
 import { Instagram, Twitter, Youtube } from 'lucide-react';
 
-export const SITE_NAME = 'OTHER PEOPLE';
+export const SITE_NAME = 'THE OTHER PERSON';
 export const TAGLINE = 'People. Ideas. Culture. Everything else.';
 export const CONTACT_EMAIL = 'hello@pakaram.in';
 
