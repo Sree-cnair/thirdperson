@@ -35,7 +35,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '', address1: '', city: '', region: '', zip: '', country: 'India' });
   const image = product.images[activeImage];
   const related = products.filter((item) => item.slug !== product.slug).slice(0, 3);
-  const guide = SIZE_GUIDES[product.category];
+  const guide = SIZE_GUIDES[product.category] || SIZE_GUIDES.Tees;
 
   useEffect(() => {
     if (document.querySelector('script[data-razorpay-checkout]')) return;
