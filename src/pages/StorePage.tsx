@@ -17,7 +17,7 @@ const FILTERS: { value: CategoryFilter; label: string }[] = [
 export function StorePage() {
   useDocumentMeta(
     'Store | THE OTHER PERSON',
-    'Objects, apparel and printed ideas from THE OTHER PERSON. Prices in INR.',
+    'The first THE OTHER PERSON catalogue: oversized tees, pattern and typography prints, and the everyday tote. Prices in INR.',
   );
   const productsFromCms = useActiveProducts();
   const [category, setCategory] = useState<CategoryFilter>('All');
@@ -32,7 +32,7 @@ export function StorePage() {
       <PageHero
         eyebrow="Store"
         title="The Store"
-        intro="Things to wear, carry, pin up or keep close. Each piece starts with an idea, an observation or a question. Online ordering is not available yet; this is a preview of the collection."
+        intro="A first catalogue of tees and totes, designed as an extension of the magazine. Secure checkout is being prepared. Product availability and order details are shown on each product page."
       />
 
       <section className="bg-cream">
@@ -49,7 +49,7 @@ export function StorePage() {
             ))}
           </div>
           <p className="mt-20 max-w-2xl border-t border-ink/15 pt-8 font-serif text-lg italic text-charcoal">
-            Collection preview. Prices are shown in Indian rupees. Online checkout is not available yet.
+            Products are made available by THE OTHER PERSON. Prices are shown in Indian rupees.
           </p>
         </div>
       </section>
