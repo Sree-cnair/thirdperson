@@ -10,6 +10,9 @@ import { formatINR } from '@/lib/format';
 import { useDocumentMeta } from '@/lib/useDocumentMeta';
 import { cmsSupabase } from '@/lib/cmsSupabase';
 
+const BUSINESS_UPI_ID = 'sreejithacn0-2@okaxis';
+const BUSINESS_UPI_NAME = 'THE OTHER PERSON';
+
 export function ProductPage() {
   const { slug = '' } = useParams();
   const products = useActiveProducts();
@@ -32,6 +35,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderMessage, setOrderMessage] = useState('');
+  const [orderNumber, setOrderNumber] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
   const [customer, setCustomer] = useState({ name: '', email: '', phone: '', address1: '', city: '', region: '', zip: '', country: 'India' });
   const image = product.images[activeImage];
@@ -48,7 +52,8 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
     });
     setOrderBusy(false);
     if (error || data?.error) { setOrderMessage(data?.error || error?.message || 'Could not place your order request. Please try again.'); return; }
-    setOrderMessage('Your order request ' + data.orderNumber + ' has been received. We will contact you with UPI payment details. Your order will be confirmed after payment is verified.');
+    setOrderNumber(data.orderNumber || '');
+    setOrderMessage('Your order request has been received. Please complete the UPI payment using the details below. Your order is confirmed only after we verify the payment.');
     setOrderOpen(false);
   };
 
@@ -136,7 +141,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
 
               <div className="mt-10 border-t border-ink/15 pt-8">
                 <button type="button" onClick={() => { setOrderOpen(!orderOpen); setOrderMessage(""); }} className="btn-primary w-full sm:w-auto">Buy now</button>
-                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">Pay via UPI. We will share payment instructions after receiving your order request.</p>
+                <p className="mt-4 text-sm leading-relaxed text-charcoal-mid">Pay securely by UPI after submitting your order request. We will verify the payment manually.</p>
                 {orderOpen && <form onSubmit={placeOrder} className="mt-6 grid gap-4 border border-ink/15 p-5">
                   <h2 className="font-serif text-2xl">Delivery details</h2>
                   <label className="text-sm">Full name<input required value={customer.name} onChange={e => setCustomer({ ...customer, name: e.target.value })} className="mt-1 w-full border border-ink/20 bg-white p-3" /></label>
@@ -154,7 +159,7 @@ function ProductDetail({ product, products }: { product: Product; products: Prod
                   <p className="text-sm font-semibold">Total: {formatINR(product.price)}</p>
                   <button disabled={orderBusy} className="btn-primary w-full disabled:opacity-50">{orderBusy ? "Submitting order…" : "Place order request"}</button>
                 </form>}
-                {orderMessage && <p role="status" className="mt-4 text-sm text-charcoal">{orderMessage}</p>}{downloadUrl && <a href={downloadUrl} className="mt-3 inline-block underline" target="_blank" rel="noreferrer">Download your digital purchase</a>}
+                {orderMessage && <div role="status" className="mt-4 border border-ink/20 p-4 text-sm text-charcoal"><p>{orderMessage}</p>{orderNumber && <div className="mt-4 space-y-2"><p><strong>Order reference:</strong> {orderNumber}</p><p><strong>Amount:</strong> {formatINR(product.price)}</p><p><strong>UPI ID:</strong> <span className="font-semibold">{BUSINESS_UPI_ID}</span></p><button type="button" onClick={() => navigator.clipboard?.writeText(BUSINESS_UPI_ID)} className="underline underline-offset-4">Copy UPI ID</button><a className="block underline underline-offset-4" href={`upi://pay?pa=${encodeURIComponent(BUSINESS_UPI_ID)}&pn=${encodeURIComponent(BUSINESS_UPI_NAME)}&am=${encodeURIComponent(String(product.price))}&cu=INR&tn=${encodeURIComponent(`THE OTHER PERSON ${orderNumber}`)}`}>Open UPI app to pay</a><p className="text-xs text-charcoal-mid">After paying, keep your UPI transaction reference. We will confirm the order after checking the payment.</p></div>}</div>}{downloadUrl && <a href={downloadUrl} className="mt-3 inline-block underline" target="_blank" rel="noreferrer">Download your digital purchase</a>}
               </div>
 
               <div className="mt-10 divide-y divide-ink/15 border-y border-ink/15">
