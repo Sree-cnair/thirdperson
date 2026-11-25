@@ -182,6 +182,36 @@ export function AdminPage() {
     setEditor(null); await load();
   };
 
+  const createPrintifyOrder = async (row: Row) => {
+    const product = data.products.find(item => item.id === row.product_id);
+    if (!product || !product.printify_product_id || !row.printify_variant_id || !row.shipping_address || !row.printify_shop_id) { setNotice('Missing Printify product, variant, shop or shipping details.'); return; }
+    if (row.payment_status !== 'verified') { setNotice('Payment must be verified first.'); return; }
+    setPrintifyBusy(true);
+    try {
+      const names = String(row.customer_name || 'Customer').trim().split(' ');
+      const firstName = names.shift() || 'Customer';
+      const payload = { external_id: row.id, label: row.order_number, line_items: [{ product_id: product.printify_product_id, variant_id: Number(row.printify_variant_id), quantity: row.quantity }], shipping_method: 1, is_printify_express: false, is_economy_shipping: false, send_shipping_notification: false, address_to: { first_name: firstName, last_name: names.join(' ') || firstName, email: row.customer_email, phone: row.customer_phone || '', country: row.shipping_address.country, region: row.shipping_address.region, address1: row.shipping_address.address1, city: row.shipping_address.city, zip: row.shipping_address.zip } };
+      const result = await callPrintify({ action: 'create-order', shopId: row.printify_shop_id, order: payload });
+      if (!result || !result.id) throw new Error('Printify did not return an order ID.');
+      const saved = await cmsSupabase!.from('store_orders').update({ printify_order_id: result.id, updated_at: new Date().toISOString() }).eq('id', row.id);
+      if (saved.error) throw saved.error;
+      setNotice('Printify order created. It is held for production approval.'); await load();
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Could not create Printify order.'); }
+    finally { setPrintifyBusy(false); }
+  };
+  const sendPrintifyToProduction = async (row: Row) => {
+    if (row.payment_status !== 'verified' || !row.printify_order_id || !row.printify_shop_id) { setNotice('A paid order linked to Printify is required.'); return; }
+    if (!window.confirm('Send this paid order to Printify production now? This may incur production costs.')) return;
+    setPrintifyBusy(true);
+    try {
+      await callPrintify({ action: 'send-to-production', shopId: row.printify_shop_id, orderId: row.printify_order_id });
+      const saved = await cmsSupabase!.from('store_orders').update({ fulfilment_status: 'in_production', updated_at: new Date().toISOString() }).eq('id', row.id);
+      if (saved.error) throw saved.error;
+      setNotice('Order sent to Printify production.'); await load();
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Could not send to production.'); }
+    finally { setPrintifyBusy(false); }
+  };
+
   const updateOrder = async (row: Row, patch: Row) => {
     if (!cmsSupabase) return;
     const { error } = await cmsSupabase.from('store_orders').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', row.id);
