@@ -57,7 +57,7 @@ export function AdminPage() {
       await load();
     } else {
       await cmsSupabase.auth.signOut();
-      setLoginError('This account is not authorised for PAKARAM Studio.');
+      setLoginError('This account is not authorised for THE OTHER PERSON Studio.');
     }
     setReady(true);
   };
@@ -162,20 +162,20 @@ export function AdminPage() {
     setBusy(false); setNotice(error ? error.message : 'Homepage settings saved.');
   };
 
-  if (!ready) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] grid place-items-center">Loading PAKARAM Studio…</div>;
-  if (!configured) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] p-8 grid place-items-center"><div className="max-w-lg"><p className="text-[#d14f1f] text-xs tracking-[.2em] uppercase">PAKARAM Studio</p><h1 className="mt-3 text-4xl font-bold">Connection needed</h1><p className="mt-4 text-white/70">Add VITE_CMS_SUPABASE_URL and VITE_CMS_SUPABASE_ANON_KEY to your Bolt environment secrets, then reload the site.</p></div></div>;
+  if (!ready) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] grid place-items-center">Loading THE OTHER PERSON Studio…</div>;
+  if (!configured) return <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] p-8 grid place-items-center"><div className="max-w-lg"><p className="text-[#d14f1f] text-xs tracking-[.2em] uppercase">THE OTHER PERSON Studio</p><h1 className="mt-3 text-4xl font-bold">Connection needed</h1><p className="mt-4 text-white/70">Add VITE_CMS_SUPABASE_URL and VITE_CMS_SUPABASE_PUBLISHABLE_KEY in the Render environment variables, then reload the site.</p></div></div>;
   if (!admin) return (
     <main className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd] flex items-center justify-center px-5 py-12">
       <form onSubmit={signIn} className="w-full max-w-md border border-white/15 bg-[#151515] p-8 md:p-10">
-        <Link to="/" className="text-sm text-white/60 hover:text-white inline-flex items-center gap-2"><ArrowLeft size={16}/> Back to PAKARAM</Link>
+        <Link to="/" className="text-sm text-white/60 hover:text-white inline-flex items-center gap-2"><ArrowLeft size={16}/> Back to THE OTHER PERSON</Link>
         <p className="mt-10 text-[#d14f1f] text-xs font-semibold uppercase tracking-[.22em]">Private editorial workspace</p>
-        <h1 className="mt-3 text-5xl font-black tracking-tight">PAKARAM<br/><span className="text-[#d14f1f]">STUDIO.</span></h1>
+        <h1 className="mt-3 text-5xl font-black tracking-tight">THE OTHER PERSON<br/><span className="text-[#d14f1f]">STUDIO.</span></h1>
         <p className="mt-4 text-white/60">Sign in with your authorised editorial account.</p>
         <label className="block mt-8 text-sm">Email<input required type="email" autoComplete="username" value={email} onChange={e=>setEmail(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
         <label className="block mt-5 text-sm">Password<input required type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
         {loginError && <p role="alert" className="mt-4 text-sm text-[#ff9b89]">{loginError}</p>}
         <button disabled={busy} className="mt-7 w-full bg-[#d14f1f] px-5 py-4 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50">{busy ? 'Signing in…' : 'Enter Studio'}</button>
-        <p className="mt-5 text-xs leading-relaxed text-white/40">Access is restricted to accounts explicitly added by a PAKARAM administrator.</p>
+        <p className="mt-5 text-xs leading-relaxed text-white/40">Access is restricted to accounts explicitly added by a THE OTHER PERSON administrator.</p>
       </form>
     </main>
   );
@@ -193,7 +193,7 @@ export function AdminPage() {
     <div className="min-h-screen bg-[#0b0b0b] text-[#f5ebdd]">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[#101010]/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-5 py-4 md:px-8">
-          <div><p className="text-lg font-black tracking-tight">PAKARAM <span className="text-[#d14f1f]">▲</span> <span className="ml-2 text-xs font-medium tracking-[.2em] text-white/40">STUDIO</span></p><p className="mt-1 text-[10px] uppercase tracking-[.2em] text-white/35">Another Way of Seeing Things</p></div>
+          <div><p className="text-lg font-black tracking-tight">THE OTHER PERSON <span className="text-[#d14f1f]">▲</span> <span className="ml-2 text-xs font-medium tracking-[.2em] text-white/40">STUDIO</span></p><p className="mt-1 text-[10px] uppercase tracking-[.2em] text-white/35">Another Way of Seeing Things</p></div>
           <div className="flex items-center gap-4"><span className="hidden text-xs text-white/50 sm:block">{admin.name}</span><Link to="/" className="text-xs text-white/60 hover:text-white">View site</Link><button onClick={signOut} className="inline-flex items-center gap-2 text-xs text-white/60 hover:text-[#d14f1f]"><LogOut size={15}/> Sign out</button></div>
         </div>
       </header>
@@ -201,10 +201,10 @@ export function AdminPage() {
         <aside className="border-b border-white/10 p-4 md:min-h-[calc(100vh-73px)] md:border-b-0 md:border-r md:p-5">
           <p className="px-3 pb-3 text-[10px] font-semibold uppercase tracking-[.2em] text-white/30">Workspace</p>
           <nav className="grid grid-cols-2 gap-1 md:grid-cols-1">{NAV.map(item=>{const Icon=item.icon;return <button key={item.id} onClick={()=>{setTab(item.id);setEditor(null);setNotice('');}} className={`flex items-center gap-3 px-3 py-3 text-left text-sm transition ${tab===item.id?'bg-[#d14f1f] text-white':'text-white/60 hover:bg-white/5 hover:text-white'}`}><Icon size={16}/>{item.label}{item.id==='submissions'&&counts.pending>0&&<span className="ml-auto rounded-full bg-white/15 px-2 py-0.5 text-[10px]">{counts.pending}</span>}</button>})}</nav>
-          <div className="mt-8 border-t border-white/10 pt-5"><div className="flex items-center gap-2 text-xs text-emerald-300"><ShieldCheck size={15}/> Private admin access</div><p className="mt-2 text-[11px] leading-relaxed text-white/35">Only accounts listed in the PAKARAM admin database can enter this workspace.</p></div>
+          <div className="mt-8 border-t border-white/10 pt-5"><div className="flex items-center gap-2 text-xs text-emerald-300"><ShieldCheck size={15}/> Private admin access</div><p className="mt-2 text-[11px] leading-relaxed text-white/35">Only accounts listed in the THE OTHER PERSON admin database can enter this workspace.</p></div>
         </aside>
         <main className="min-w-0 p-5 md:p-8 lg:p-10">
-          <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[.24em] text-[#d14f1f]">Editorial control room</p><h1 className="mt-2 text-4xl font-black tracking-tight md:text-5xl">{title}</h1><p className="mt-2 text-sm text-white/45">Manage the publication, community and PAKARAM label.</p></div>
+          <div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-[10px] uppercase tracking-[.24em] text-[#d14f1f]">Editorial control room</p><h1 className="mt-2 text-4xl font-black tracking-tight md:text-5xl">{title}</h1><p className="mt-2 text-sm text-white/45">Manage the publication, community and THE OTHER PERSON label.</p></div>
             {(['stories','products','categories','authors'] as Tab[]).includes(tab)&&<button onClick={()=>openEditor(tab==='stories'?'article':tab==='products'?'product':tab==='authors'?'author':'category')} className="inline-flex items-center gap-2 bg-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-widest"><Plus size={16}/> Add {tab==='stories'?'story':tab==='products'?'product':tab==='authors'?'author':'category'}</button>}
           </div>
           {notice&&<div className="mt-6 flex items-center justify-between border border-[#d14f1f]/40 bg-[#d14f1f]/10 px-4 py-3 text-sm text-[#ffd0c1]">{notice}<button onClick={()=>setNotice('')}><X size={15}/></button></div>}
@@ -255,7 +255,7 @@ export function AdminPage() {
           {tab==='authors'&&<div className="mt-8 grid gap-3 md:grid-cols-2">{data.authors.map(row=><div key={row.id} className="flex items-center gap-4 border border-white/10 bg-[#151515] p-4">{row.avatar_url?<img src={row.avatar_url} alt="" className="h-14 w-14 rounded-full object-cover"/>:<div className="grid h-14 w-14 place-items-center rounded-full bg-white/10">{row.name?.slice(0,1)}</div>}<div className="min-w-0 flex-1"><p className="font-semibold">{row.name}</p><p className="text-xs text-white/40">{row.role}</p></div><button onClick={()=>openEditor('author',row)} className="border border-white/20 px-3 py-2 text-xs">Edit</button></div>)}</div>}
           {tab==='homepage'&&<div className="mt-8 max-w-3xl border border-white/10 bg-[#151515] p-6"><p className="mb-6 text-sm text-white/45">Control the editorial hero and choose the story highlighted on the homepage.</p><div className="space-y-5">{field('Hero eyebrow','hero_eyebrow',settings.hero_eyebrow,v=>setSettings({...settings,hero_eyebrow:v}))}{field('Hero title','hero_title',settings.hero_title,v=>setSettings({...settings,hero_title:v}))}{field('Hero description','hero_description',settings.hero_description,v=>setSettings({...settings,hero_description:v}),{multiline:true})}<label className="block text-sm text-white/70">Featured story<select value={settings.featured_article_id||''} onChange={e=>setSettings({...settings,featured_article_id:e.target.value||null})} className="mt-2 w-full border border-white/15 bg-black p-3 text-white"><option value="">Use default featured story</option>{data.articles.filter(a=>a.status==='published').map(a=><option key={a.id} value={a.id}>{a.title}</option>)}</select></label><button onClick={()=>void saveSettings()} disabled={busy} className="inline-flex items-center gap-2 bg-[#d14f1f] px-5 py-3 text-xs font-bold uppercase tracking-widest"><Save size={15}/> Save homepage</button></div></div>}
           {tab==='newsletter'&&<div className="mt-8 overflow-x-auto border border-white/10"><table className="w-full text-left text-sm"><thead className="bg-white/5 text-xs uppercase tracking-wider text-white/40"><tr><th className="p-4">Email</th><th className="p-4">Subscribed</th></tr></thead><tbody>{data.newsletter_subscribers.map(row=><tr key={row.id} className="border-t border-white/10"><td className="p-4">{row.email}</td><td className="p-4 text-white/45">{prettyDate(row.created_at)}</td></tr>)}</tbody></table>{!data.newsletter_subscribers.length&&<p className="p-6 text-sm text-white/40">No subscribers found in this CMS database yet.</p>}</div>}
-          <footer className="mt-14 flex items-center justify-between border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-white/25"><span>PAKARAM · Private editorial workspace</span><span>Another Way of Seeing Things</span></footer>
+          <footer className="mt-14 flex items-center justify-between border-t border-white/10 pt-5 text-[10px] uppercase tracking-[.18em] text-white/25"><span>THE OTHER PERSON · Private editorial workspace</span><span>Another Way of Seeing Things</span></footer>
         </main>
       </div>
     </div>
