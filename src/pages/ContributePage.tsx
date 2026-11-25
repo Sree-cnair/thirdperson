@@ -11,8 +11,8 @@ const STEPS = [
 
 export function ContributePage() {
   useDocumentMeta(
-    'Contribute | OTHER PEOPLE',
-    'Submit an article, essay, opinion or creative piece to OTHER PEOPLE. Independent writers and creative voices are welcome.',
+    'Contribute | THE OTHER PERSON',
+    'Share an essay, opinion, observation or creative work with THE OTHER PERSON. Curious voices and fresh perspectives are welcome.',
   );
 
   return (
@@ -20,7 +20,7 @@ export function ContributePage() {
       <PageHero
         eyebrow="Contribute"
         title="Write for us"
-        intro="OTHER PEOPLE welcomes independent writers and creative voices. Bring us the argument you have been thinking about, the film nobody else is talking about, or the design you made on a late night."
+        intro="We are interested in the things people notice, question, laugh about and rarely say out loud. Bring us a personal essay, an uncomfortable question, a cultural observation, an opinion you can stand behind or a creative idea."
       />
 
       <section className="bg-cream">
@@ -41,7 +41,7 @@ export function ContributePage() {
               </ol>
               <p className="mt-8 flex gap-3 text-sm leading-relaxed text-charcoal">
                 <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-success" />
-                Every submission is reviewed by the OTHER PEOPLE editorial team before publication. Nothing is published automatically.
+                Every submission is reviewed by the THE OTHER PERSON editorial team before publication. Nothing is published automatically.
               </p>
             </div>
           </aside>
