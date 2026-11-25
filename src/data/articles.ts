@@ -9,7 +9,7 @@ export const ARTICLES: Article[] = [
       'From courtroom dramas to village comedies, Malayalam films keep finding the human truth hidden in ordinary lives.',
     section: 'stories',
     category: 'Cinema',
-    author: { name: 'Anjana Menon', role: 'Film Writer' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-10',
     readingTime: 7,
     image: {
@@ -32,7 +32,7 @@ export const ARTICLES: Article[] = [
       'Kerala has always had a football culture. What has changed is the structure that turns passion into players.',
     section: 'stories',
     category: 'Football',
-    author: { name: 'Rahul Varma', role: 'Sports Correspondent' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-08',
     readingTime: 6,
     image: {
@@ -55,7 +55,7 @@ export const ARTICLES: Article[] = [
       'Streetwear used to borrow its visual language from elsewhere. Now it is being rewritten from neighbourhoods across India.',
     section: 'stories',
     category: 'Fashion',
-    author: { name: 'Nila Thomas', role: 'Fashion Editor' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-05',
     readingTime: 5,
     image: {
@@ -78,7 +78,7 @@ export const ARTICLES: Article[] = [
       'A question for writers, designers and readers who want their work to belong to the people who make it.',
     section: 'stories',
     category: 'Society',
-    author: { name: 'Arjun Pillai', role: 'Essayist' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-02',
     readingTime: 8,
     image: {
@@ -101,7 +101,7 @@ export const ARTICLES: Article[] = [
       'The argument against remakes misses the point. The problem is the absence of a reason to make them at all.',
     section: 'opinion',
     category: 'Cinema',
-    author: { name: 'Anjana Menon', role: 'Film Writer' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-12',
     readingTime: 4,
     image: {
@@ -123,7 +123,7 @@ export const ARTICLES: Article[] = [
       'Football fans are told to pick a side and defend it forever. The stands would be better if we allowed doubt.',
     section: 'opinion',
     category: 'Football',
-    author: { name: 'Rahul Varma', role: 'Sports Correspondent' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-06',
     readingTime: 5,
     image: {
@@ -145,7 +145,7 @@ export const ARTICLES: Article[] = [
       'A look at the visual language of public protest, and what designers can learn from it.',
     section: 'culture',
     category: 'Design',
-    author: { name: 'Imran Sheikh', role: 'Visual Culture Writer' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-10-28',
     readingTime: 6,
     image: {
@@ -164,10 +164,10 @@ export const ARTICLES: Article[] = [
     title: 'Typography as Clothing: Notes on Our Newest Experiments',
     dek: 'When a line of text becomes a garment, the reader has to decide how close they want to stand.',
     excerpt:
-      'Behind the scenes of the PAKARAM typography series, and why we chose to print words instead of logos.',
+      'Why we chose to print words instead of logos, and how a sentence can become a conversation.',
     section: 'fashion',
     category: 'Fashion',
-    author: { name: 'Nila Thomas', role: 'Fashion Editor' },
+    author: { name: 'Editorial Desk', role: 'THE OTHER PERSON' },
     date: '2026-11-14',
     readingTime: 4,
     image: {
