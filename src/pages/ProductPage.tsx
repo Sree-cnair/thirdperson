@@ -16,8 +16,8 @@ export function ProductPage() {
   const product = products.find((item) => item.slug === slug);
 
   useDocumentMeta(
-    product ? `${product.name} | PAKARAM Store` : 'Product not found | PAKARAM',
-    product?.tagline ?? 'This product could not be found in the PAKARAM store.',
+    product ? `${product.name} | THE OTHER PERSON Store` : 'Product not found | THE OTHER PERSON',
+    product?.tagline ?? 'This product could not be found in the THE OTHER PERSON store.',
   );
 
   if (!product) return <NotFoundContent />;
