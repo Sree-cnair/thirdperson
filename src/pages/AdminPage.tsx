@@ -104,8 +104,7 @@ export function AdminPage() {
     setBusy(false);
   };
 
-  const requestPasswordReset = async (event: FormEvent) => {
-    event.preventDefault();
+  const requestPasswordReset = async () => {
     if (!cmsSupabase) return;
     setBusy(true); setResetNotice(''); setLoginError('');
     const { error } = await cmsSupabase.auth.resetPasswordForEmail(resetEmail.trim(), {
@@ -316,10 +315,10 @@ export function AdminPage() {
         <button disabled={busy} className="mt-7 w-full bg-[#d14f1f] px-5 py-4 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50">{busy ? 'Signing in…' : 'Enter Studio'}</button>
         <button type="button" onClick={()=>{setResetEmail(email);setResetNotice('');setLoginError('');document.getElementById('admin-reset-panel')?.classList.toggle('hidden');}} className="mt-5 text-xs text-[#f18b63] underline">Forgot password?</button>
         <div id="admin-reset-panel" className="hidden mt-4 border border-white/10 p-4">
-          <form onSubmit={requestPasswordReset}>
-            <label className="block text-sm">Email for reset link<input required type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
-            <button disabled={busy} className="mt-4 w-full border border-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-50">{busy ? 'Sending…' : 'Send reset link'}</button>
-          </form>
+          <div>
+            <label className="block text-sm">Email for reset link<input required type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();void requestPasswordReset();}}} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
+            <button type="button" disabled={busy} onClick={()=>void requestPasswordReset()} className="mt-4 w-full border border-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-50">{busy ? 'Sending…' : 'Send reset link'}</button>
+          </div>
         </div>
         <p className="mt-5 text-xs leading-relaxed text-white/40">Access is restricted to accounts explicitly added by a THE OTHER PERSON administrator.</p>
       </form>
