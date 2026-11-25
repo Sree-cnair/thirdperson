@@ -44,15 +44,14 @@ export function SiteFooter() {
         </nav>
 
         <div className="flex flex-col gap-8 lg:col-span-3">
-          <div>
-            <h2 className="font-sans text-xs font-semibold uppercase tracking-label text-lemon">Contact</h2>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="mt-4 block font-sans text-base text-cream underline decoration-cream/30 underline-offset-4 transition-colors hover:text-lemon"
-            >
-              {CONTACT_EMAIL}
-            </a>
-          </div>
+          {CONTACT_EMAIL && (
+            <div>
+              <h2 className="font-sans text-xs font-semibold uppercase tracking-label text-lemon">Contact</h2>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="mt-4 block font-sans text-base text-cream underline decoration-cream/30 underline-offset-4 transition-colors hover:text-lemon">
+                {CONTACT_EMAIL}
+              </a>
+            </div>
+          )}
           <div>
             <h2 className="font-sans text-xs font-semibold uppercase tracking-label text-lemon">Follow</h2>
             <ul className="mt-4 flex items-center gap-3">
