@@ -105,13 +105,23 @@ export function AdminPage() {
   };
 
   const requestPasswordReset = async () => {
-    if (!cmsSupabase) return;
+    if (!cmsSupabase) { setResetNotice('The sign-in service is not configured. Please contact support.'); return; }
+    const targetEmail = resetEmail.trim().toLowerCase();
+    if (!targetEmail || !/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(targetEmail)) {
+      setResetNotice('Enter the email address for your admin account.');
+      return;
+    }
     setBusy(true); setResetNotice(''); setLoginError('');
-    const { error } = await cmsSupabase.auth.resetPasswordForEmail(resetEmail.trim(), {
-      redirectTo: window.location.origin + '/admin',
-    });
-    setResetNotice(error ? error.message : 'If an account exists for that email, a password-reset link has been sent. Check your inbox and spam folder.');
-    setBusy(false);
+    try {
+      const { error } = await cmsSupabase.auth.resetPasswordForEmail(targetEmail, {
+        redirectTo: 'https://the-other-person.onrender.com/admin',
+      });
+      setResetNotice(error ? `Could not send reset email: ${error.message}` : `Reset request submitted for ${targetEmail}. Check Inbox, Spam and Promotions. If it does not arrive, contact support.`);
+    } catch (error) {
+      setResetNotice(error instanceof Error ? `Could not send reset email: ${error.message}` : 'Could not send reset email. Please try again.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const saveNewPassword = async (event: FormEvent) => {
@@ -313,12 +323,12 @@ export function AdminPage() {
         {loginError && <p role="alert" className="mt-4 text-sm text-[#ff9b89]">{loginError}</p>}
         {resetNotice && <p role="status" className="mt-4 text-sm text-[#ffb69f]">{resetNotice}</p>}
         <button disabled={busy} className="mt-7 w-full bg-[#d14f1f] px-5 py-4 text-sm font-bold uppercase tracking-widest text-white disabled:opacity-50">{busy ? 'Signing in…' : 'Enter Studio'}</button>
-        <button type="button" onClick={()=>{setResetEmail(email);setResetNotice('');setLoginError('');document.getElementById('admin-reset-panel')?.classList.toggle('hidden');}} className="mt-5 text-xs text-[#f18b63] underline">Forgot password?</button>
-        <div id="admin-reset-panel" className="hidden mt-4 border border-white/10 p-4">
-          <div>
-            <label className="block text-sm">Email for reset link<input required type="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();void requestPasswordReset();}}} className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
-            <button type="button" disabled={busy} onClick={()=>void requestPasswordReset()} className="mt-4 w-full border border-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-50">{busy ? 'Sending…' : 'Send reset link'}</button>
-          </div>
+        <div className="mt-7 border-t border-white/10 pt-5">
+          <p className="text-sm font-semibold">Forgot your password?</p>
+          <p className="mt-1 text-xs leading-relaxed text-white/45">Enter your authorised admin email and we’ll request a secure reset link.</p>
+          <label className="mt-4 block text-sm">Admin email for reset<input required type="email" autoComplete="email" value={resetEmail} onChange={e=>setResetEmail(e.target.value)} placeholder="you@example.com" className="mt-2 w-full bg-black border border-white/20 px-4 py-3 text-white outline-none focus:border-[#d14f1f]"/></label>
+          <button type="button" disabled={busy} onClick={()=>void requestPasswordReset()} className="mt-4 w-full border border-[#d14f1f] px-4 py-3 text-xs font-bold uppercase tracking-widest disabled:opacity-50">{busy ? 'Sending reset request…' : 'Email me a reset link'}</button>
+          {resetNotice && <p role="status" aria-live="polite" className="mt-4 text-sm leading-relaxed text-[#ffb69f]">{resetNotice}</p>}
         </div>
         <p className="mt-5 text-xs leading-relaxed text-white/40">Access is restricted to accounts explicitly added by a THE OTHER PERSON administrator.</p>
       </form>
