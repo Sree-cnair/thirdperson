@@ -6,40 +6,40 @@ import { useDocumentMeta } from '@/lib/useDocumentMeta';
 const PRINCIPLES = [
   {
     title: 'Independent',
-    text: 'We answer to our readers and our writers, not to advertisers or algorithms. Every commission is a conversation about what matters.',
+    text: 'We are curious before we are certain. We ask who sets the rules, who benefits from them and whether they still make sense.',
   },
   {
     title: 'Plural',
-    text: 'We publish more than one side of a question and we welcome the voices that rarely get a platform: regional, first-time and dissenting.',
+    text: 'There is rarely just one way to see a situation. We welcome different experiences, regional perspectives, first-time voices and respectful disagreement.',
   },
   {
     title: 'Considered',
-    text: 'Long reads, careful editing and design with a point of view. Speed matters less than getting it right and making it worth reading twice.',
+    text: 'We value thoughtful writing, clear ideas, honest context and design that has something to say. Not every hot take needs to become a headline.',
   },
 ];
 
 export function AboutPage() {
   useDocumentMeta(
-    'About | OTHER PEOPLE',
-    'OTHER PEOPLE is an independent space for stories, opinions, design and ideas from Kerala and beyond. Read our mission and editorial philosophy.',
+    'About | THE OTHER PERSON',
+    'THE OTHER PERSON is an independent space for stories, opinions, design and ideas from Kerala and beyond. Read our mission and editorial philosophy.',
   );
 
   return (
     <>
-      <PageHero eyebrow="About OTHER PEOPLE" title="About" tone="dark" />
+      <PageHero eyebrow="About THE OTHER PERSON" title="About" tone="dark" />
 
       <section className="bg-cream">
         <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-20 md:px-8 md:py-28 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-6">
             <p className="font-serif text-3xl leading-snug md:text-5xl">
-              Culture is never just one thing. It changes with the people who create it, question it and live it.
+              There are always three people. You. Me. And the other person.
             </p>
           </div>
           <div className="space-y-6 font-sans text-lg leading-[1.75] text-charcoal lg:col-span-5 lg:col-start-8">
             <p>
-              OTHER PEOPLE is an independent space for stories, opinions, design and ideas. From cinema and football to fashion and the world around us, we look at things from different sides.
+              The other person is the one whose opinion somehow matters, even when they have nothing to do with our lives. They show up when we choose what to wear, what to study, where to work, who to love, when to marry and what to post. Sometimes they are family, neighbours, friends or complete strangers. Sometimes they are simply a voice in our heads asking, “Log kya kahenge?” THE OTHER PERSON is an Indian culture and ideas platform exploring that space between who we are and who we are expected to be. Through stories, opinions, conversations, design and products, we question the rules, laugh at the contradictions and make room for different perspectives.
             </p>
-            <p className="font-serif text-2xl italic text-ink">People. Ideas. Culture. Everything else.</p>
+            <p className="font-serif text-2xl italic text-ink">The opinions, expectations, contradictions, conversations, culture and everyday absurdities that shape the way we live.</p>
           </div>
         </div>
       </section>
@@ -77,7 +77,7 @@ export function AboutPage() {
               Writers, photographers and designers from across India send us their work. Every submission is read by our editorial team.
             </p>
             <Link to="/contribute" className="link-underline mt-10 text-ink hover:text-orange-deep">
-              Contribute to OTHER PEOPLE
+              Contribute to THE OTHER PERSON
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </div>
