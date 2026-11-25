@@ -3,12 +3,12 @@ import type { Product } from '@/data/types';
 export const PRODUCTS: Product[] = [
   {
     slug: 'pakaram-core-oversized-tee',
-    name: 'PAKARAM Core Oversized Tee',
+    name: 'THE OTHER PERSON Core Oversized Tee',
     category: 'Tees',
     price: 1899,
-    tagline: 'The everyday base. Heavy, boxy and built to be worn for years.',
+    tagline: 'A considered everyday essential. Comfortable, relaxed and made to carry an idea.',
     description:
-      'The Core is the foundation of the label: a heavyweight oversized tee with a dropped shoulder, a relaxed body and a small PAKARAM wordmark at the chest. Cut for layering, it works as a standalone piece or under an open shirt.',
+      'The Core is the foundation of the label: a heavyweight oversized tee with a dropped shoulder, a relaxed body and a small THE OTHER PERSON wordmark at the chest. Cut for layering, it works as a standalone piece or under an open shirt.',
     fabric: ['100% combed cotton', '240 GSM heavyweight jersey', 'Garment-washed for a soft hand feel', 'Colour: Ink Black'],
     fit: ['Oversized, dropped shoulder', 'Boxy body with a relaxed sleeve', 'Length sits below the hip'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
@@ -25,12 +25,12 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: 'pakaram-abstract-pattern-tee',
-    name: 'PAKARAM Abstract Pattern Tee',
+    name: 'THE OTHER PERSON Abstract Pattern Tee',
     category: 'Tees',
     price: 1699,
-    tagline: 'Triangles, repeats and a pattern built from the brand mark.',
+    tagline: 'An abstract repeat for people who like their basics with a little more going on.',
     description:
-      'An experiment in pattern. The abstract triangle repeat is drawn from the PAKARAM accent and printed as a single, all-over graphic across a regular-fit tee. Each print is placed by hand, so no two shirts are identical.',
+      'An experiment in pattern. The abstract triangle repeat is drawn from the THE OTHER PERSON accent and printed as a single, all-over graphic across a regular-fit tee. Each print is placed by hand, so no two shirts are identical.',
     fabric: ['100% cotton', '200 GSM single jersey', 'Water-based print that keeps its softness', 'Colour: Warm Cream'],
     fit: ['Regular fit with a crew neck', 'Slightly cropped body length', 'Ribbed collar for shape retention'],
     sizes: ['S', 'M', 'L', 'XL'],
@@ -47,10 +47,10 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: 'pakaram-typography-tee',
-    name: 'PAKARAM Typography Tee',
+    name: 'THE OTHER PERSON Typography Tee',
     category: 'Tees',
     price: 1599,
-    tagline: 'One sentence, set in heavy condensed type across the chest.',
+    tagline: 'A thought worth wearing, set in bold type.',
     description:
       'Part of the typography series. A single line of text, drawn from street signs and film dialogue, printed in condensed capitals. The wearer becomes a reader first, and the phrase starts the conversation.',
     fabric: ['100% cotton', '180 GSM jersey', 'Screen-printed in a single colour', 'Colour: Ink Black'],
@@ -69,10 +69,10 @@ export const PRODUCTS: Product[] = [
   },
   {
     slug: 'pakaram-everyday-tote',
-    name: 'PAKARAM Everyday Tote',
+    name: 'THE OTHER PERSON Everyday Tote',
     category: 'Totes',
     price: 1299,
-    tagline: 'A canvas tote for books, cameras and the things you forgot you needed.',
+    tagline: 'For books, errands, plans and everything you carry between them.',
     description:
       'A structured canvas tote with reinforced handles and an interior pocket. The wordmark is printed on one face, and the bag is sized to carry a hardcover book, a laptop sleeve and a water bottle without slumping.',
     fabric: ['100% heavyweight canvas', 'Reinforced cotton handles', 'Interior zip pocket', 'Colour: Natural'],
